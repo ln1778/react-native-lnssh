@@ -1,4 +1,4 @@
-# React Native SplashScreen (remobile)
+# React Native Lnssh (remobile)
 A lnssh for react-native, hide when application loaded
 
 ## Installation
