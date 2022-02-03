@@ -80,7 +80,15 @@ public class MainActivity extends ReactActivity {
     }
 }
 ```
-
+* set  permission (in AndroidManifest.xml)
+```java
+<uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+```
 ## Usage
 
 ### Example
@@ -92,12 +100,15 @@ var {
     AppRegistry,
     View,
     Text,
+    NativeModules
 } = ReactNative;
-var SplashScreen = require('react-native-lnssh');
+var Lnsshmanager = require('react-native-lnssh');
+var {LnsshModule} = NativeModules;
 
 var KitchenSink = React.createClass({
     componentDidMount: function() {
-        SplashScreen.hide();
+       LnsshModule.splash_hide();
+
     },
     render() {
         return(
@@ -112,9 +123,4 @@ var KitchenSink = React.createClass({
 
 AppRegistry.registerComponent('KitchenSink', () => KitchenSink);
 ```
-
-### constants
-- `translucent` is translucent enable
-### methods
-- `hide()` hide SplashScreen
 
