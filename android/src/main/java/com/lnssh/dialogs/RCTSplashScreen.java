@@ -28,10 +28,11 @@ import java.util.Map;
 
 public class RCTSplashScreen extends ReactContextBaseJavaModule {
     private static Dialog splashDialog;
-    private ImageView splashImageView;
+    private static ImageView splashImageView;
 
-    private Activity activity;
-    private boolean translucent;
+    private static Activity activity;
+    private static boolean translucent;
+    private static int drawableId;
 
     public RCTSplashScreen(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -43,7 +44,7 @@ public class RCTSplashScreen extends ReactContextBaseJavaModule {
         return "SplashScreen";
     }
 
-    protected Activity getActivity() {
+    protected static Activity getActivity() {
         return activity;
     }
 
@@ -54,7 +55,7 @@ public class RCTSplashScreen extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void hide() {
+    public static void hide() {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -62,13 +63,13 @@ public class RCTSplashScreen extends ReactContextBaseJavaModule {
             }
         }, 500);
     }
-  public void show(Activity activity){
-    this.activity=activity;
-    translucent=true;
+  public static void show(Activity mactivity,int pdrawableId){
+    activity=mactivity;
+      drawableId=pdrawableId;
     showSplashScreen();
   };
 
-    private void removeSplashScreen() {
+    private static void removeSplashScreen() {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 if (splashDialog != null && splashDialog.isShowing()) {
@@ -95,16 +96,8 @@ public class RCTSplashScreen extends ReactContextBaseJavaModule {
         });
     }
 
-    private int getSplashId() {
-        int drawableId = getActivity().getResources().getIdentifier("splash", "drawable", getActivity().getClass().getPackage().getName());
-        if (drawableId == 0) {
-            drawableId = getActivity().getResources().getIdentifier("splash", "drawable", getActivity().getPackageName());
-        }
-        return drawableId;
-    }
 
-    private void showSplashScreen() {
-        final int drawableId = getSplashId();
+    private static void showSplashScreen() {
         if ((splashDialog != null && splashDialog.isShowing())||(drawableId == 0)) {
             return;
         }
