@@ -172,4 +172,114 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
   public void onNewIntent(Intent intent) {
 
   }
+   /**
+     * 保存图片到图库
+     * @param bmp
+     */
+    public static void saveImageToGallery(Context context,Bitmap bmp ) {
+		File appDir = new File(Environment.getExternalStorageDirectory(), "Boohee");
+		   if (!appDir.exists()) {
+
+		   appDir.mkdir();
+			}
+
+			String fileName = System.currentTimeMillis() + ".jpg";
+			File file = new File(appDir, fileName);
+			try {
+
+			FileOutputStream fos = new FileOutputStream(file);
+			 bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+			 fos.flush();
+			 fos.close();
+		   } catch (FileNotFoundException e) {
+
+			 e.printStackTrace();
+		   } catch (IOException e) {
+
+			e.printStackTrace();
+		   }
+
+			// 其次把文件插入到系统图库
+			try {
+
+		   MediaStore.Images.Media.insertImage(context.getContentResolver(),
+					  file.getAbsolutePath(), fileName, null);
+		   } catch (FileNotFoundException e) {
+
+					 e.printStackTrace();
+			}
+   }
+
+   public static Bitmap base64ToBitmap(String base64Data) {
+	   byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
+	   return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+   }
+   @ReactMethod
+   public void saveImage(String imgsrc, Callback successback){
+	   Bitmap bmp=base64ToBitmap(imgsrc);
+	   saveImageToGallery(myContext,bmp);
+	   successback.invoke("true");
+   }
+
+   @ReactMethod
+   public void getHideNavigationBar(Callback cb){
+	   String manufacturer = Build.MANUFACTURER;
+	   // 这个字符串可以自己定义,例如判断华为就填写huawei,魅族就填写meizu
+	   if ("xiaomi".equalsIgnoreCase(manufacturer)) {
+		   boolean isHideNavigationBar = Settings.Global.getInt(myContext.getContentResolver(), "force_fsg_nav_bar", 0) != 0;
+		   cb.invoke(isHideNavigationBar);
+	   }else{
+		   cb.invoke(false);
+	   }
+   }
+
+   @ReactMethod
+   public void donwloadSaveImg(String filePaths,final Promise promise) {
+		 try {
+			   if (!TextUtils.isEmpty(filePaths)) { //网络图片
+				   // 对资源链接
+				   URL url = new URL(filePaths);
+				   //打开输入流
+				   InputStream inputStream = url.openStream();
+				   //对网上资源进行下载转换位图图片
+				   mBitmap = BitmapFactory.decodeStream(inputStream);
+				   inputStream.close();
+			   }
+			   saveFile((ReactApplicationContext) myContext,mBitmap);
+			   promise.resolve("true");
+		   } catch (IOException e) {
+			   promise.reject("false");
+			   e.printStackTrace();
+		   } catch (Exception e) {
+			   promise.reject("false");
+			   e.printStackTrace();
+		   }
+   }
+
+
+
+   public static void saveFile(ReactApplicationContext context,Bitmap bm ) throws IOException {
+			   File dirFile = new File(Environment.getExternalStorageDirectory().getPath());
+			   if (!dirFile.exists()) {
+				   dirFile.mkdir();
+			   }
+			   File dirFile2 = new File(Environment.getExternalStorageDirectory().getPath()+"/DCIM");
+			   if (!dirFile2.exists()) {
+				   dirFile2.mkdir();
+			   }
+			   File dirFile3 = new File(Environment.getExternalStorageDirectory().getPath()+"/DCIM/Camera");
+			   if (!dirFile3.exists()) {
+				   dirFile3.mkdir();
+			   }
+			   String fileName = UUID.randomUUID().toString() + ".jpg";
+			   File myCaptureFile = new File(Environment.getExternalStorageDirectory().getPath() + "/DCIM/Camera/" + fileName);
+			   BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(myCaptureFile));
+			   bm.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+			   Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+			   Uri uri = Uri.fromFile(myCaptureFile);
+			   intent.setData(uri);
+			   context.sendBroadcast(intent);
+			   bos.flush();
+			   bos.close();
+   }
 }
