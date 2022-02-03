@@ -1,4 +1,4 @@
-# React Native Lnssh (remobile)
+# React Native Lnssh (mobile)
 A lnssh for react-native, hide when application loaded
 
 ## Installation
