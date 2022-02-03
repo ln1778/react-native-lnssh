@@ -10,16 +10,19 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
+import com.google.zxing.aztec.decoder.Decoder;
 import com.lnssh.dialogs.RCTSplashScreen;
 import com.lnssh.utils.ConfigurationUtil;
 
@@ -27,7 +30,17 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.Settings;
+import android.text.TextUtils;
+import com.facebook.react.bridge.Promise;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.lang.String;
+import java.net.URL;
 import java.util.Base64;
+import java.util.UUID;
 
 public class LnsshModule extends ReactContextBaseJavaModule implements ActivityEventListener {
   final ReactApplicationContext CONTEXT;
@@ -35,10 +48,13 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
   public static final int REQUEST_SEND_TEXT = 13002;
   Activity activity;
   Callback callback;
+	private static Bitmap mBitmap;
+	private static ReactContext myContext;
 
   public LnsshModule(ReactApplicationContext reactContext) {
     super(reactContext);
 	  CONTEXT = reactContext;
+	  myContext=reactContext;
   }
 
   @Override
@@ -210,10 +226,14 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			}
    }
 
+   @RequiresApi(api = Build.VERSION_CODES.O)
    public static Bitmap base64ToBitmap(String base64Data) {
-	   byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
-	   return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		   Base64.Decoder decoder = Base64.getMimeDecoder();
+	     byte[] bytes =  decoder.decode(base64Data);
+	     return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
    }
+   @RequiresApi(api = Build.VERSION_CODES.O)
    @ReactMethod
    public void saveImage(String imgsrc, Callback successback){
 	   Bitmap bmp=base64ToBitmap(imgsrc);
