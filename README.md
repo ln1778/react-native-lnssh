@@ -3,7 +3,7 @@ A lnssh for react-native, hide when application loaded
 
 ## Installation
 ```sh
-npm install @remobile/react-native-lnssh --save
+npm install react-native-lnssh --save
 ```
 ### Installation (iOS)
 * Drag Lnssh.xcodeproj to your project on Xcode.
@@ -33,7 +33,7 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
 ```gradle
 ...
 include ':react-native-lnssh'
-project(':react-native-lnssh').projectDir = new File(settingsDir, '../node_modules/@remobile/react-native-lnssh/android')
+project(':react-native-lnssh').projectDir = new File(settingsDir, '../node_modules/react-native-lnssh/android')
 ```
 
 * In `android/app/build.gradle`
@@ -89,7 +89,7 @@ var {
     View,
     Text,
 } = ReactNative;
-var SplashScreen = require('@remobile/react-native-lnssh');
+var SplashScreen = require('react-native-lnssh');
 
 var KitchenSink = React.createClass({
     componentDidMount: function() {
