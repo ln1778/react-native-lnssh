@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">RNI18nExample</string>
+    <string name="version_update">Version Update</string>
+    <string name="update_now">Update Now</string>
+    <string name="writepermissions">Please allow permission to download and install</string>
+    <string name="update_content">Update Content</string>
+    <string name="update_content_default">There is a new version, go and download the update!</string>
+    <string name="next_wraing">Next Reminder</string>
+    <string name="back_install">Background silent download installation!</string>
+    <string name="update_success">The update is completed and will take effect next time!</string>
+    <string name="update_success_install">Download completed, waiting for installation!</string>
+    <string name="update_failed">Download Failed!</string>
+    <string name="no_find_apk">No programs were found to open such files!</string>
+    <string name="update_last">It is already the latest version!</string>
+</resources>

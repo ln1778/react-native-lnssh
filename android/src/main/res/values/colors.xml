@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+	<!-- accent colors -->
+	<color name="accent_regular">#11a65d</color>
+	<color name="progress_bg">#f2f2f2</color>
+	<color name="accent_work">#0096ff</color>
+	<color name="accent_dark">#4caf50</color>
+	<color name="accent_secondary_light">#caffe5</color>
+	<color name="red_color">#f45e4d</color>
+
+	<color name="accent_secondary_dark">#d5ffd7</color>
+	<color name="accent_light_alpha">#7011a65d</color>
+	<color name="accent_dark_alpha">#504caf50</color>
+
+	<color name="chat_sender_text">#ff888888</color>
+	<color name="activity_background">#ffeeeeee</color>
+	<color name="detail_highlight_bg_color">#ffcccccc</color>
+	<color name="directory_header_color">#ffd9d9d9</color>
+	<color name="cardview_background_light">#ffffffff</color>;
+	<color name="backup_logos_background">#fff0f0f0</color>;
+
+
+	<!-- message list dark -->
+	<color name="text_color_first_line_dark">#fff1f3f4</color>
+	<color name="text_color_second_line_dark">#ff9aa0a6</color>
+	<color name="text_color_first_line_bold_dark">#ffffffff</color>
+	<color name="text_color_second_line_bold_dark">#ffffffff</color>
+	<color name="text_color_third_line_dark">#ff8a9096</color>
+
+	<!-- chat bubbles -->
+	<!-- light -->
+	<color name="light_bubble_recv">#F1F3F4</color>
+	<color name="light_bubble_send">#EFFDE4</color>
+	<color name="bubble_status_light">#fff9d9</color>
+	<color name="unread_messages_text_color">#88000000</color>
+	<color name="unread_messages_bg_color">#fff7f8f9</color>
+	<color name="date_separator_bg_color">#ffbababa</color>
+
+	<!-- selectors -->
+	<color name="bubble_selected">#41d68d</color>
+	<color name="bubble_selected_overlay">#4441d68d</color> 
+	<!-- dark -->
+	<color name="dark_bubble_recv">#666666</color>
+	<color name="dark_bubble_send">#303030</color>
+	<color name="bubble_status_dark">#ede7ca</color>
+	<color name="dark_unread_messages_text_color">#FFFFFFFF</color>
+	<color name="dark_unread_messages_bg_color">#ff7090B0</color>
+	<color name="dark_date_separator_bg_color">#ff404040</color>
+
+	<!-- selectors -->
+	<color name="bubble_selected_dark">#419645</color>
+	<color name="bubble_selected_overlay_dark">#44419645</color>
+
+	<!-- compose bubble -->
+	<color name="compose_bubble_light">#15000000</color>
+	<color name="compose_bubble_dark">#33000000</color>
+	<color name="text_main_color">#333333</color>
+	<!-- agnostic -->
+	<color name="date_separator_text_color">#FFffffff</color>
+
+	<!-- wizard step pager display -->
+    <color name="step_pager_previous_tab_color">#4433b5e5</color>
+    <color name="step_pager_next_tab_color">#10000000</color>
+
+	<color name="gallery_background">#ff1a1a1a</color>
+	<color name="status_bar_detail">#3000</color>
+
+	<color name="text_color_primary">#ff202124</color>
+	<color name="text_color_secondary">#ff5f6368</color>
+	<color name="text_color_tertiary">#ffa5a5a5</color>
+	<color name="ballot_list_footer_background">#ffe3e3e3</color>
+	<color name="border_color">#e5e5e5</color>
+	<!-- material -->
+	<color name="material_green">#4caf50</color>
+	<color name="material_cyan">#00bcd4</color>
+	<color name="material_indigo">#3f51b5</color>
+	<color name="material_yellow">#ffeb3b</color>
+	<color name="material_teal">#009688</color>
+	<color name="material_teal_100">#B2DfDB</color>
+	<color name="material_red">#f44336</color>
+	<color name="material_orange">#ff9800</color>
+	<color name="material_pink">#e91e63</color>
+	<color name="material_blue">#2196f3</color>
+	<color name="material_teal_alpha">#cc009688</color>
+	<color name="material_lime"> #cddc39</color>
+	<color name="material_green_700">#388e3c</color>
+	<color name="material_deep_purple">#673ab7</color>
+	<color name="material_purple">#9c27b0</color>
+	<color name="material_dark_grey">#263238</color>
+	<color tools:override="true" name="material_grey_300">#e0e0e0</color>
+	<color name="material_grey_400">#bdbdbd</color>
+	<color name="material_grey_500">#9e9e9e</color>
+	<color name="material_grey_550">#868686</color>
+	<color tools:override="true" name="material_grey_600">#757575</color>
+	<color tools:override="true" name="material_grey_800">#424242</color>
+	<color name="material_brown">#795548</color>
+	<color name="material_amber">#ffc107</color>
+	<color name="material_indigo_a400">#3d5afe</color>
+	<color name="material_indigo_a700">#304ffe</color>
+	<color name="material_indigo_a200">#536dfe</color>
+	<color name="divider_color">#1f000000</color>
+	<color name="material_teal_secondary">#00ebd5</color>
+	<color name="material_grey_300_alpha">#44e0e0e0</color>
+
+	<!--   your app branding color for the app bar -->
+	<color name="material_primary">#ffffff</color>
+	<!--   darker variant for the status bar and contextual app bars -->
+	<color name="material_primary_dark">#757575</color>
+
+	<!-- emoji picker color -->
+	<color name="emoji_picker_background_top">#e4e7e9</color>
+	<color name="emoji_picker_background_main">#f3f4f8</color>
+	<color name="emoji_picker_divider">#f6f7f8</color>
+	<color name="emoji_picker_top_divider">#eff1f2</color>
+	<color name="emoji_picker_hint">#d3d3d3</color>
+
+	<!-- values for dark application theme -->
+	<color name="dark_material_level0">#121212</color>
+	<color name="dark_material_level1">#1F1F1F</color>
+	<color name="dark_material_level2">#272727</color>
+	<color name="dark_material_level3">#323232</color>
+
+	<color name="fab_label_background">#555555</color>
+	<color name="background_dim_light">#77ffffff</color>
+	<color name="background_dim_dark">#77000000</color>
+	<color name="item_controller_color">#FFAAAAAA</color>
+	<color name="imagepaint_overlay_select_color">#FFFFFFFF</color>
+
+	<color name="list_item_background_checked">#40999999</color>
+	<!-- solid colors of selected list item background -->
+	<color name="list_item_background_checked_light">#ffd9d9d9</color>
+	<color name="list_item_background_checked_dark">#ff4a4a4a</color>
+
+	<!-- voip -->
+	<color name="voip_accept_call_tint">@color/accent_regular</color>
+	<color name="voip_end_call_tint">#ff1744</color>
+	<color name="voip_dialer_theme_color">#c4002a7e</color>
+	<color name="voip_dialer_theme_color_blurry">#55002a7e</color>
+	<color name="voip_bottom_sheet_highlight_color">#2a56c6</color>
+
+
+	<!-- compose edittext -->
+	<color name="compose_shadow_light">#0A000000</color>
+	<color name="compose_stroke">#20000000</color>
+	<color name="text_extra">#999999</color>
+	
+
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#0369d9</color>
+    <color name="colorBlue">#0369d9</color>
+    <color name="colorText">#6f809a</color>
+    <color name="colorBg">#161E30</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="white">#ffffff</color>
+
+    <color name="colorGreen">#4EB975</color>
+    <color name="colorRed">#EE6662</color>
+
+</resources>

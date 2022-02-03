@@ -42,7 +42,7 @@ project(':react-native-lnssh').projectDir = new File(settingsDir, '../node_modul
 ...
 dependencies {
     ...
-    compile project(':react-native-lnssh')
+    implementation project(':react-native-lnssh')
 }
 ```
 
@@ -67,12 +67,16 @@ protected List<ReactPackage> getPackages() {
 
 ```java
 public class MainActivity extends ReactActivity {
-    public static Activity activity;           // <------ add here
+    public static Activity activity;           // <------ add 
+    public LnsshManager lnsshmanager; // <------ add here
     ......
     @Override
     protected String getMainComponentName() {
-        activity = this;           // <------ add here
-        ......
+        activity = this;    // <------ add here
+        lnsshmanager=new LnsshManager(this);  // <------ add here
+       lnsshmanager.splash_show(R.drawable.splash);// <------ 如果设置启动页 add here
+       // lnsshmanager.CheckVersionHost("https://admin-gc.dz520.fun/android/version.json",false)  《-----检查版本更新 add here
+       ......
     }
 }
 ```

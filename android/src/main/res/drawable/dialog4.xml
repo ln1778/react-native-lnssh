@@ -1,0 +1,11 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!--设置渐变色-->
+    <gradient
+        android:endColor="#ffffff"
+        android:startColor="#ffffff" />
+
+    <solid android:color="#ffffff" />
+    <!--设置圆角-->
+    <corners
+        android:radius="12dp" />
+</shape>

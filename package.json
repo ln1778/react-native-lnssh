@@ -1,10 +1,11 @@
 {
   "name": "react-native-lnssh",
-  "version": "0.0.16",
+  "version": "0.0.23",
   "description": "Provide lnssh to your React Native application",
   "license": "MIT",
   "author": "ln1778",
   "main": "index.js",
+  "homepage": "https://github.com/ln1778/react-native-lnssh",
   "repository": {
     "type": "git",
     "url": "github.com/ln1778/react-native-lnssh.git"
@@ -13,15 +14,14 @@
     "react-native",
     "react-component",
     "ios",
-    "lnssh"
+    "lnssh",
+    "android",
+    "mobile"
   ],
   "dependencies": {
     "react": "17.0.2",
-    "react-native": "0.67.2"
-  },
-  "directories": {
-    "doc": "docs",
-    "example": "example"
+    "react-native": "0.67.2",
+    "prop-types":"^15.8.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
