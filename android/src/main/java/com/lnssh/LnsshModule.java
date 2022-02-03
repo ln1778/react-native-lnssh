@@ -105,7 +105,10 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			currentActivity.startActivityForResult(Intent.createChooser(send,"我的分享"),REQUEST_SEND_TEXT);
 	    }
 	}
-
+	@ReactMethod
+	public void splash_show(){
+		RCTSplashScreen.native_show();
+	}
 	@ReactMethod
 	public void splash_hide(){
      	RCTSplashScreen.hide();

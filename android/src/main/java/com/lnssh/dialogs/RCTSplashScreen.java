@@ -64,11 +64,13 @@ public class RCTSplashScreen extends ReactContextBaseJavaModule {
         }, 500);
     }
   public static void show(Activity mactivity,int pdrawableId){
-    activity=mactivity;
+      activity=mactivity;
       drawableId=pdrawableId;
-    showSplashScreen();
+      showSplashScreen();
   };
-
+    public static void  native_show() {
+        showSplashScreen();
+    }
     private static void removeSplashScreen() {
         getActivity().runOnUiThread(new Runnable() {
             public void run() {
@@ -99,6 +101,9 @@ public class RCTSplashScreen extends ReactContextBaseJavaModule {
 
     private static void showSplashScreen() {
         if ((splashDialog != null && splashDialog.isShowing())||(drawableId == 0)) {
+            return;
+        }
+        if(getActivity()==null){
             return;
         }
         getActivity().runOnUiThread(new Runnable() {
