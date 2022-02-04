@@ -9,7 +9,6 @@
 #import "UpdateManager.h"
 #import "UpdateDataLoader.h"
 #import <React/RCTRootView.h>
-#import "Threema-Swift.h"
 #import "WHToast.h"
 #import "RCTSplashScreen.h"
 #import "XMNetWorkHelper.h"

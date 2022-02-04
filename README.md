@@ -5,14 +5,17 @@ A lnssh for react-native, hide when application loaded
 ```sh
 npm install react-native-lnssh --save
 ```
-### Installation (iOS)
-* Drag Lnssh.xcodeproj to your project on Xcode.
-* Click on your main project file (the one that represents the .xcodeproj) select Build Phases and drag libLnssh.a from the Products folder inside the Lnssh.xcodeproj.
+### Installation (iOS pod install)
+
+* cd ios
+* 在 Podfile 文件上添加   pod 'WHToast','~>0.1.0'
+
+* pod install
 
 * In AppDelegate.m
 ```objc
 ...
-#import "Lnssh.h" //<--- import
+#import <Lnssh/Lnssh.h> //<--- import
 ...
 RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"KitchenSink"
@@ -29,7 +32,7 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
 ```
 
 
-### Installation (Android)
+### Installation (Android) old version < 0.60
 ```gradle
 ...
 include ':react-native-lnssh'
@@ -75,7 +78,7 @@ public class MainActivity extends ReactActivity {
         activity = this;    // <------ add here
         lnsshmanager=new LnsshManager(this);  // <------ add here
        lnsshmanager.splash_show(R.drawable.splash);// <------ 如果设置启动页 add here
-       // lnsshmanager.CheckVersionHost("https://admin-gc.dz520.fun/android/version.json",false)  《-----检查版本更新 add here
+       // lnsshmanager.CheckVersionHost("https://......./version.json",false)  《-----检查版本更新 add here
        ......
     }
 }
