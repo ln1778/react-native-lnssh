@@ -242,18 +242,6 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
    }
 
    @ReactMethod
-   public void getHideNavigationBar(Callback cb){
-	   String manufacturer = Build.MANUFACTURER;
-	   // 这个字符串可以自己定义,例如判断华为就填写huawei,魅族就填写meizu
-	   if ("xiaomi".equalsIgnoreCase(manufacturer)) {
-		   boolean isHideNavigationBar = Settings.Global.getInt(myContext.getContentResolver(), "force_fsg_nav_bar", 0) != 0;
-		   cb.invoke(isHideNavigationBar);
-	   }else{
-		   cb.invoke(false);
-	   }
-   }
-
-   @ReactMethod
    public void donwloadSaveImg(String filePaths,final Promise promise) {
 		 try {
 			   if (!TextUtils.isEmpty(filePaths)) { //网络图片

@@ -55,7 +55,7 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
 
 
 //获取版本信息
--(void)getAppVersion:(CallBack)callback{
+-(void)getAppVersion:(NSString *)hosturl callback:(CallBack)callback{
   
   [self createPath];
   
@@ -86,7 +86,7 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
   
   NSString*timeString = [NSString stringWithFormat:@"%0.f", a];//转为字符型
   
-  NSString *api=@"https://chatapp.hwanc.net/hwancchat/app/version.json";
+  NSString *api=hosturl;
   NSDictionary *param=@{@"t":timeString};
   
   [XMNetWorkHelper getWithUrlString:api parameters:param success:^(NSDictionary *data) {

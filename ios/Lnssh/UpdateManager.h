@@ -20,7 +20,7 @@
 #define IOS7_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
 
 @interface UpdateManager : RCTEventEmitter<RCTBridgeModule>
--(void)checkVersionUpdate:(Boolean *) toast;
+-(void)checkVersionUpdate:(Boolean *) toast hosturl:(NSString *)hosturl;
 +(instancetype)sharedInstance;
 
 @end

@@ -19,7 +19,7 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                initialProperties:nil
                                                    launchOptions:launchOptions];
   [Lnssh show:rootView]; //<--- add show SplashScreen
-
+  [Lnssh CheckVersionHost:@"http://.....version.json"]; //<--- 检查版本更新 add CheckVersionHost
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [[UIViewController alloc] init];
   rootViewController.view = rootView;
@@ -57,7 +57,7 @@ import com.lnssh.LnsshPackage;  // <--- import
 @Override
 protected List<ReactPackage> getPackages() {
    ......
-   new LnsshPackage(MainActivity.activity, true),            // <------ add here [the seconde params is translucent]
+   new LnsshPackage(),            // <------ add here [the seconde params is translucent]
    ......
 }
 

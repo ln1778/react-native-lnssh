@@ -4,5 +4,5 @@
 #import <React/RCTBridgeModule.h>
 #endif
 
-@interface RNI18n : NSObject <RCTBridgeModule>
+@interface LnsshModule : NSObject <RCTBridgeModule>
 @end
