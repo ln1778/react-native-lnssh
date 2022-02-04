@@ -15,14 +15,14 @@ npm install react-native-lnssh --save
 * In AppDelegate.m
 ```objc
 ...
-#import <Lnssh/Lnssh.h> //<--- import
+#import <Lnssh/LnsshManager.h> //<--- import
 ...
 RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"KitchenSink"
                                                initialProperties:nil
                                                    launchOptions:launchOptions];
-  [Lnssh show:rootView]; //<--- add show SplashScreen
-  [Lnssh CheckVersionHost:@"http://.....version.json"]; //<--- 检查版本更新 add CheckVersionHost
+  [LnsshManager show:rootView]; //<--- add show SplashScreen
+  [LnsshManager CheckVersionHost:@"http://.....version.json"]; //<--- 检查版本更新 add CheckVersionHost
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [[UIViewController alloc] init];
   rootViewController.view = rootView;

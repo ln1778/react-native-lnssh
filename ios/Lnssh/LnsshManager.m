@@ -5,12 +5,12 @@
 //  Created by ln on 2022/2/4.
 //
 
-#import "Lnssh.h"
+#import "LnsshManager.h"
 #import "RCTSplashScreen.h"
 #import "UpdateManager.h"
 
 
-@implementation Lnssh
+@implementation LnsshManager
 
 
 + (void)show:(RCTRootView *)v {

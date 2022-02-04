@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface Lnssh : NSObject
+@interface LnsshManager : NSObject
 + (void)show:(RCTRootView *)v;
 +(void)CheckVersionHost:(NSString *)hosturl;
 @end
