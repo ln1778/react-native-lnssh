@@ -22,7 +22,7 @@ public class ConfigurationUtil {
 	public static final String SDFILE = Environment.getExternalStoragePublicDirectory("") + File.separator + "hnlx/gt/";
 
 	public static final String FILE_PATH = ConfigurationUtil.SDFILE + "camera" + File.separator;
-	public static final String APK_PATH = "hnlx/gt/"+ "apk" + File.separator;
+	public static final String APK_PATH = "lnssh/"+ "apk" + File.separator;
 	public static final String APK_PATH_ABSOULT = ConfigurationUtil.SDFILE+ "apk" + File.separator;
 	public static final String RECORD_PATH_ABSOULT = ConfigurationUtil.SDFILE+ "apk" + File.separator;
 }

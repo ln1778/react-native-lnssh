@@ -101,6 +101,49 @@ public class MainActivity extends ReactActivity {
 <uses-permission android:name="android.permission.CAMERA" />
 <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 ```
+* add networkSecurityConfig (in AndroidManifest.xml)
+
+```java
+<application
+.....
+android:networkSecurityConfig="@xml/network_security_config"
+...
+/>
+```
+
+* add file_paths(in AndroidManifest.xml)
+```java
+<provider
+		android:name="androidx.core.content.FileProvider"
+		android:authorities="${ApplicationId}.fileprovider"
+		android:exported="false"
+		android:grantUriPermissions="true">
+		<meta-data
+			android:name="android.support.FILE_PROVIDER_PATHS"
+			android:resource="@xml/file_paths" />
+	</provider>
+```
+* in file_paths.xml
+
+```java 
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+	<root-path name="root" path="/" />
+	......
+	<files-path name="app_down" path="/lnssh/apk/" />   //<----add here
+	<files-path name="share_files" path="/lnssh/record/" />  //<----add here
+</paths>
+
+```
+* in network_security_config.xml
+```java 
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+	<base-config cleartextTrafficPermitted="true" />
+</network-security-config>
+
+```
+
 ## Usage
 
 ### Example
