@@ -21,13 +21,14 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"KitchenSink"
                                                initialProperties:nil
                                                    launchOptions:launchOptions];
-  [LnsshManager show:rootView]; //<--- add show SplashScreen
-  [LnsshManager CheckVersionHost:@"http://.....version.json"]; //<--- 检查版本更新 add CheckVersionHost
+  
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [[UIViewController alloc] init];
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  [LnsshManager show:rootView]; //<--- add show SplashScreen
+  [LnsshManager CheckVersionHost:@"http://.....version.json"]; //<--- 检查版本更新 add CheckVersionHost
   return YES;
 ```
 * In Info.plis
