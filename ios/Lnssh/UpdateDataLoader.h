@@ -11,7 +11,7 @@ typedef void (^CallBack)(NSDictionary *data); // 定义函数指针类型
 //创建bundle路径
 -(void)createPath;
 //获取版本信息
--(void)getAppVersion:(CallBack)callback;
+-(void)getAppVersion:(NSString *)hosturl callback:(CallBack)callback;
 -(void)downLoad:(CallBack)callback;
 -(void)downLoadApp:(CallBack)callback;
 

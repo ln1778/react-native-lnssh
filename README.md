@@ -9,7 +9,7 @@ npm install react-native-lnssh --save
 
 * cd ios
 * 在 Podfile 文件上添加   pod 'WHToast','~>0.1.0'
-
+                        pod 'MBProgressHUD', '~> 1.2.0'
 * pod install
 
 * In AppDelegate.m
@@ -29,6 +29,11 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   return YES;
+```
+* In Info.plis
+
+```objc
+添加 Privacy - Photo Library Additions Usage Description 权限
 ```
 
 

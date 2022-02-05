@@ -1,14 +1,11 @@
-#import <UIKit/UIKit.h>
+
 #import "LnsshModule.h"
-#import "UpdateManager.h"
-#import "RCTSplashScreen.h"
 
 
 @implementation LnsshModule
 
-RCTPromiseResolveBlock *imgpromise;
-RCTPromiseRejectBlock *imgreject;
-CallBack *imgback;
+UIViewController *topRootViewController;
+
 
 RCT_EXPORT_MODULE();
 
@@ -207,45 +204,30 @@ RCT_EXPORT_METHOD(isPinCodeWithImage:(NSString *)imageName callback:(RCTResponse
 
 }
 
-RCT_EXPORT_METHOD(saveImage:(NSString *) imageurl callback:(CallBack)callback){
+RCT_EXPORT_METHOD(saveImage:(NSString *)imageurl callback:(CallBack)callback){
     NSArray *imageArray = [imageurl componentsSeparatedByString:@","];
-    NSData *imageData = [[NSData alloc] initWithBase64EncodedString:imageArray[1] options:NSDataBase64DecodingIgnoreUnknownCharacters];];
+    NSData *imageData = [[NSData alloc] initWithBase64EncodedString:imageArray[1] options:NSDataBase64DecodingIgnoreUnknownCharacters];
     UIImage *image = [UIImage imageWithData:imageData];
-    imgback=callback;
     UIImageWriteToSavedPhotosAlbum(image, self,@selector(image:didFinishSavingWithError:contextInfo:), nil);
     callback(@"true");
 }
 
-RCT_EXPORT_METHOD(donwloadSaveImg:(NSString *) filePaths (RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject ){
+RCT_EXPORT_METHOD(donwloadSaveImg:(NSString *)filePaths resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject){
     UIImage *img=[UIImage imageNamed:filePaths];
-    imgpromise=resolve;
-    imgreject=rejecter;
-    UIImageWriteToSavedPhotosAlbum(img, self,@selector(image:didFinishSavingWithError:contextInfo:), nil);
+    UIImageWriteToSavedPhotosAlbum(img, self,@selector(image:didFinishSavingWithError:contextInfo:),nil);
+    resolve(@"true");
 }
--(void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
+-(void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo callback:(CallBack)callback{
     NSString *msg = nil ;
     if(error){
         msg = @"保存图片失败" ;
-        if(imgpromise!=nil){
-            imgpromise(@"false");
-            imgpromise=nil;
-        }
-        if(imgback!=nil){
-            imgback(@"false");
-            imgback=nil;
-        }
     }else{
-        if(imgback!=nil){
-            imgback(@"true");
-            imgback=nil;
-        }
         msg = @"保存图片成功" ;
-        if(imgreject!=nil){
-            imgreject(@"true");
-            imgreject=nil;
-        }
     }
+    [WHToast showMessage:msg duration:2 finishHandler:^{
+                   
+                   }];
 }
 
 
