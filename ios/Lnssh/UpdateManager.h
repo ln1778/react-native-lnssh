@@ -9,9 +9,7 @@
 #define UpdateManager_h
 #import <React/RCTBridgeModule.h>
 #import <React/RCTLog.h>
-#import <React/RCTEventEmitter.h>
 #import <UserNotifications/UserNotifications.h>
-#import <React/RCTEventEmitter.h>
 
 
 #define IOS10_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 10.0)
@@ -19,7 +17,7 @@
 #define IOS8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
 #define IOS7_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
 
-@interface UpdateManager : RCTEventEmitter<RCTBridgeModule>
+@interface UpdateManager : NSObject<RCTBridgeModule>
 -(void)checkVersionUpdate:(Boolean *) toast hosturl:(NSString *)hosturl;
 +(instancetype)sharedInstance;
 

@@ -7,8 +7,10 @@
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "WHToast.h"
+#import <React/RCTBridge.h>
 
-@interface CusToast : NSObject
+@interface CusToast : NSObject <RCTBridgeModule>
 
 
 @end

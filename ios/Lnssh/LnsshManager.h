@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <React/RCTRootView.h>
 
 @interface LnsshManager : NSObject
 + (void)show:(RCTRootView *)v;
