@@ -9,7 +9,6 @@
 
 import NativeInterface from './internal/nativeInterface';
 import {processColor,Dimensions} from 'react-native';
-import PropTypes from "prop-types";
 import React, { Component } from 'react';
 const { width,height } = Dimensions.get('window');
 
@@ -28,10 +27,8 @@ const DEFAULT_OPTIONS = {
 };
 
 
-class ImagePicker extends Component {
-  
-
-  launchCamera(options, callback){
+export default {
+  launchCamera:(options, callback)=>{
     return NativeInterface.launchCamera(
       {
         ...DEFAULT_OPTIONS,
@@ -39,9 +36,8 @@ class ImagePicker extends Component {
       },
       callback,
     );
-  }
-
-  launchImageLibrary(options, callback){
+  },
+  launchImageLibrary:(options, callback)=>{
     return NativeInterface.launchImageLibrary(
       {
         ...DEFAULT_OPTIONS,
@@ -50,13 +46,7 @@ class ImagePicker extends Component {
       callback,
     );
   }
-}
-ImagePicker.propTypes = {
-    callback:PropTypes.func,
-    options:PropTypes.object
-}
+};
 
-const ImagePickersha=new ImagePicker();
-
-export default ImagePickersha;
+// export default ImagePickersha;
 

@@ -10,7 +10,7 @@
 #import "UpdateManager.h"
 #import "RCTSplashScreen.h"
 #import "WHToast.h"
-
+#import <PhotosUI/PhotosUI.h>
 @interface LnsshModule : NSObject <RCTBridgeModule>
 typedef void (^CallBack)(NSDictionary *data);
 

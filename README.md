@@ -34,7 +34,10 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
 * In Info.plis
 
 ```objc
-添加 Privacy - Photo Library Additions Usage Description 权限
+添加 Privacy - Photo Library Additions Usage Description,
+Privacy - Photo Library Additions Usage ,DescriptionNSPhotoLibraryUsageDescription ,
+PHAuthorizationStatusLimited 权限
+
 ```
 
 

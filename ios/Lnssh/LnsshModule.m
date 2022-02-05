@@ -209,30 +209,39 @@ RCT_EXPORT_METHOD(isPinCodeWithImage:(NSString *)imageName callback:(RCTResponse
 
 }
 
-RCT_EXPORT_METHOD(saveImage:(NSString *)imageurl callback:(CallBack)callback){
-    NSArray *imageArray = [imageurl componentsSeparatedByString:@","];
-    NSData *imageData = [[NSData alloc] initWithBase64EncodedString:imageArray[1] options:NSDataBase64DecodingIgnoreUnknownCharacters];
+RCT_EXPORT_METHOD(saveImage:(NSString *)imageurl callback:(RCTResponseSenderBlock)callback){
+//    NSArray *imageArray = [imageurl componentsSeparatedByString:@","];
+    NSData *imageData = [[NSData alloc] initWithBase64EncodedString:imageurl options:NSDataBase64DecodingIgnoreUnknownCharacters];
     UIImage *image = [UIImage imageWithData:imageData];
-    UIImageWriteToSavedPhotosAlbum(image, self,@selector(image:didFinishSavingWithError:contextInfo:), nil);
-    callback(@"true");
+    NSLog(@"img%@",image);
+    [[PHPhotoLibrary sharedPhotoLibrary]performChanges:^{
+           [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+       } completionHandler:^(BOOL success, NSError * _Nullable error) {
+      
+           if (error) {
+               NSLog(@"%@",@"保存失败");
+               callback(@[@"400",@"failed"]);
+           } else {
+               NSLog(@"%@",@"保存成功");
+               callback(@[@"200",@"success"]);
+           }
+       }];
 }
 
 RCT_EXPORT_METHOD(donwloadSaveImg:(NSString *)filePaths resolve:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject){
-    UIImage *img=[UIImage imageNamed:filePaths];
-    UIImageWriteToSavedPhotosAlbum(img, self,@selector(image:didFinishSavingWithError:contextInfo:),nil);
-    resolve(@"true");
-}
--(void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo callback:(CallBack)callback{
-    NSString *msg = nil ;
-    if(error){
-        msg = @"保存图片失败" ;
-    }else{
-        msg = @"保存图片成功" ;
-    }
-    [WHToast showMessage:msg duration:2 finishHandler:^{
-                   
-                   }];
+    UIImage *image=[UIImage imageNamed:filePaths];
+    [[PHPhotoLibrary sharedPhotoLibrary]performChanges:^{
+           [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+       } completionHandler:^(BOOL success, NSError * _Nullable error) {
+           if (error) {
+               NSLog(@"%@",@"保存失败");
+               reject(@"400",@"保存失败",error);
+           } else {
+               NSLog(@"%@",@"保存成功");
+               resolve(@"true");
+           }
+       }];
 }
 
 
