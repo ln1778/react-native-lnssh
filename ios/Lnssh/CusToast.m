@@ -2,7 +2,7 @@
 
 @implementation CusToast
 
-RCT_EXPORT_MODULE();
+RCT_EXPORT_MODULE(Toast);
 
 
 RCT_EXPORT_METHOD(info:(NSString *)text){
