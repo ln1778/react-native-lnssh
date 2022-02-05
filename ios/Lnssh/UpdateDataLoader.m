@@ -103,6 +103,8 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
     if(qlServiceV>localV){
       [data setValue:@"2" forKey:@"has_new"];
       [data setValue:data[@"ios_ql_url"] forKey:@"ios_ql_url"];
+        NSMutableDictionary *data2 = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%@", data[@"ios_build"]],@"bundleVersion",[NSString stringWithFormat:@"%@", data[@"ios_ql_url"]],@"downloadUrl",nil];
+        [UpdateDataLoader sharedInstance].versionInfo=data2;
       callback(data);
       return;
     }
@@ -111,22 +113,8 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
       //下载bundle文件 存储在 Doucuments/IOSBundle/下
       
       [data setValue:@"1" forKey:@"has_new"];
-      
-      
-      
-      //NSString*url=@"http://www.lsmalls.com/hmallsapp/index.ios.bundle";
-      
-      //[[DownLoadTool defaultDownLoadTool] downLoadWithUrl:url data:data];
-      
-      
-      NSMutableDictionary *data2 = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%@", data[@"ios_build"]],@"bundleVersion",[NSString stringWithFormat:@"%@", data[@"ios_url"]],@"downloadUrl",nil];
-      
-      
-      
+        NSMutableDictionary *data2 = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%@", data[@"ios_build"]],@"bundleVersion",[NSString stringWithFormat:@"%@", data[@"ios_url"]],@"downloadUrl",nil];
       [UpdateDataLoader sharedInstance].versionInfo=data2;
-      
-      
-      
       [self closeSqlite];
       
       callback(data);
@@ -152,7 +140,8 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
   
   
   NSString* url=[NSString stringWithFormat:@"%@",[UpdateDataLoader sharedInstance].versionInfo[@"downloadUrl"]];
-  
+    NSLog(@"versionInfo%@",[UpdateDataLoader sharedInstance].versionInfo);
+    NSLog(@"url%@",url);
   [[DownLoadTool defaultDownLoadTool] downLoadWithUrl:url callback:^(Boolean t){
     
     if(t){
@@ -175,7 +164,8 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
 -(void)downLoadApp:(CallBack)cb{
   NSString* iosurl=[NSString stringWithFormat:@"%@",[UpdateDataLoader sharedInstance].versionInfo[@"downloadUrl"]];
     NSURL *url =[NSURL URLWithString:[iosurl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    NSLog(@"url:%@",url);
+    NSLog(@"versionInfo%@",[UpdateDataLoader sharedInstance].versionInfo);
+    NSLog(@"url%@",url);
     [[UIApplication sharedApplication] openURL:url options:nil completionHandler:^(BOOL success) {
           cb([UpdateDataLoader sharedInstance].versionInfo);
     }];

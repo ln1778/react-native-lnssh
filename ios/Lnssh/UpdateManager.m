@@ -12,6 +12,8 @@
 #import "WHToast.h"
 #import "RCTSplashScreen.h"
 #import "XMNetWorkHelper.h"
+#import "LoadingView.h"
+
 
 @implementation UpdateManager
 
@@ -59,6 +61,7 @@ bool *icons_flag;
                                           rootViewController = rootViewController.presentedViewController;
                                       }
                 }
+            dispatch_async(dispatch_get_main_queue(), ^{
             UIAlertController * _alertVC = [UIAlertController alertControllerWithTitle:@"版本更新" message:update_content!=nil?update_content:@"更新内容" preferredStyle:UIAlertControllerStyleAlert];
             
             UIAlertAction *_doAction = [UIAlertAction actionWithTitle:@"立即更新" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action)
@@ -67,18 +70,18 @@ bool *icons_flag;
                 [WHToast showMessage:@"后台静默下载中" duration:2 finishHandler:^{
                 
                 }];
-               // [[LoadingView sharedInstance]showLoadingViewWithTitle:NSLocalizedString(@"downing", nil) superView:rootViewController.view];
+              [[LoadingView sharedInstance]showLoadingViewWithTitle:@"下载中" superView:rootViewController.view];
                         if(has_new==@"1"){
                             [upLoatder downLoad:^(NSDictionary *rs){
-                              //  [[LoadingView sharedInstance] closeLoadingView];
+                              [[LoadingView sharedInstance] closeLoadingView];
                                 [WHToast showMessage:@"更新完成" duration:2 finishHandler:^{
-                                
+                                    NSLog(@"更新完成1");
                                 }];
                             }];
                         }else if(has_new==@"2"){
                             [upLoatder downLoadApp:^(NSDictionary *rs){
-                              // [[LoadingView sharedInstance] closeLoadingView];
-                                
+                              [[LoadingView sharedInstance] closeLoadingView];
+                                NSLog(@"更新完成2");
                             }];
                         }
                  }];
@@ -93,6 +96,7 @@ bool *icons_flag;
         
             
                  [rootViewController presentViewController:_alertVC animated:YES completion:nil];
+            });
         }else{
             if(toast){
                 [WHToast showMessage:@"已经上最新版本" duration:2 finishHandler:^{

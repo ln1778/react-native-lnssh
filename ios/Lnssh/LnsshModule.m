@@ -17,7 +17,12 @@ RCT_EXPORT_METHOD(splash_show){
     [RCTSplashScreen splashshow];
 }
 RCT_EXPORT_METHOD(splash_hide){
-    [RCTSplashScreen hide];
+    @try {
+        [RCTSplashScreen hide];
+    } @catch (NSException *exception) {
+        
+    }
+    
 }
 
 

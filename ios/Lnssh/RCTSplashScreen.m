@@ -2,6 +2,7 @@
 
 static RCTRootView *rootView = nil;
 static UIImageView *view=nil;
+
 @interface RCTSplashScreen()
 
 @end
@@ -12,23 +13,26 @@ RCT_EXPORT_MODULE(SplashScreen)
 
 + (void)show:(RCTRootView *)v {
     rootView = v;
-    rootView.loadingViewFadeDelay = 0;
-    rootView.loadingViewFadeDuration = 0;
-    view = [[UIImageView alloc]initWithFrame:[UIScreen mainScreen].bounds];
+    rootView.frame=[UIApplication sharedApplication].delegate.window.frame;
+    view = [[UIImageView alloc]initWithFrame:[UIApplication sharedApplication].delegate.window.frame];
     view.image = [UIImage imageNamed:@"splash"];
     
     [[NSNotificationCenter defaultCenter] removeObserver:rootView  name:RCTContentDidAppearNotification object:rootView];
-    
-    [rootView setLoadingView:view];
+    NSLog(@"splash_show");
+    dispatch_async(dispatch_get_main_queue(), ^{
+    [rootView addSubview:view];
+    });
 }
 + (void)splashshow{
+    NSLog(@"splash_show000");
     if (!rootView||!view) {
         return;
     }
-    rootView.loadingViewFadeDelay = 0;
-    rootView.loadingViewFadeDuration = 0;
-        [[NSNotificationCenter defaultCenter] removeObserver:rootView  name:RCTContentDidAppearNotification object:rootView];
-        [rootView setLoadingView:view];
+    dispatch_async(dispatch_get_main_queue(), ^{
+    NSLog(@"splash_show111");
+    [rootView addSubview:view];
+      //  [rootView setLoadingView:view];
+    });
 }
 
 RCT_EXPORT_METHOD(hide) {
@@ -42,9 +46,9 @@ RCT_EXPORT_METHOD(hide) {
                                          duration:rootView.loadingViewFadeDelay
                                           options:UIViewAnimationOptionTransitionCrossDissolve
                                        animations:^{
-                                           rootView.loadingView.hidden = YES;
+                                          view.hidden = YES;
                                        } completion:^(__unused BOOL finished) {
-                                           [rootView.loadingView removeFromSuperview];
+                                           [view removeFromSuperview];
                                        }];
                    });
 }
