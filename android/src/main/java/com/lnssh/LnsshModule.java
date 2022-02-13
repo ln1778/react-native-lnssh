@@ -61,6 +61,13 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
   public String getName() {
     return "LnsshModule";
   }
+  @RequiresApi(api = Build.VERSION_CODES.O)
+  public void startInstallPermissionSettingActivity() {
+	  Log.d("startInstallPermissionSettingActivity","start");
+	  Uri packageURI = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+	  Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
+	  this.CONTEXT.startActivityForResult(intent,1002,null);
+  }
   @SuppressLint("NewApi")
 	@ReactMethod
 	public void goshareToSocial(ReadableMap data, Callback callback){
@@ -79,6 +86,12 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			if (!dir.exists() && !dir.isDirectory()) {
 				dir.mkdirs();
 			}
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				boolean hasInstallPermission = this.getReactApplicationContext().getPackageManager().canRequestPackageInstalls();
+				Log.d("hasInstallPermission", String.valueOf(hasInstallPermission));
+				if (!hasInstallPermission) {
+					startInstallPermissionSettingActivity();
+				} else {
 			try {
 				Base64.Decoder decoder = Base64.getMimeDecoder();
 				byte[] bytes = decoder.decode(imageName.getBytes());
@@ -115,6 +128,8 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 					}
 				}
 			}
+		 }
+        	}
 		}else{
 			send.setType("text/plain");
 			send.putExtra(Intent.EXTRA_TEXT, title);
