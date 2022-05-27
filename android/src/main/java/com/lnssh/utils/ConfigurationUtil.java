@@ -6,9 +6,9 @@ import java.io.File;
 
 
 public class ConfigurationUtil {
-	public static final String WEBVERSION = "https://chatapp.hwanc.net/hwancchat/app/version.json";
-	public static final String APKHOST = "https://hcoins.oss-cn-hangzhou.aliyuncs.com/hwancchat.apk";
-	public static final String BUNDLEHOST = "https://hcoins.oss-cn-hangzhou.aliyuncs.com/index.android.bundle";
+	public static String WEBVERSION = "https://chatapp.hwanc.net/hwancchat/app/version.json";
+	public static String APKHOST = "https://hcoins.oss-cn-hangzhou.aliyuncs.com/hwancchat.apk";
+	public static String BUNDLEHOST = "https://hcoins.oss-cn-hangzhou.aliyuncs.com/index.android.bundle";
 	public static final String APK_NAME="lnssh.apk";
 	public static final int SUCCESSCODE = 1;//成功标识
 	public static final int FAILURECODE = 0;//失败标识
