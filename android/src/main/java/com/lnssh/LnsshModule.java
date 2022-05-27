@@ -9,7 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
-
+import androidx.multidex.BuildConfig;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 
@@ -63,7 +63,6 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
   }
   @RequiresApi(api = Build.VERSION_CODES.O)
   public void startInstallPermissionSettingActivity() {
-	  Log.d("startInstallPermissionSettingActivity","start");
 	  Uri packageURI = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
 	  Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
 	  this.CONTEXT.startActivityForResult(intent,1002,null);
@@ -101,7 +100,8 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 				bos.write(bytes);
 				Uri imageUri;
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-					imageUri = FileProvider.getUriForFile(this.getReactApplicationContext(), "ch.HmallsChat.app.fileprovider", file);
+					
+					imageUri = FileProvider.getUriForFile(this.getReactApplicationContext(),this.myContext.getApplicationContext().getPackageName()+".fileprovider", file);
 				} else {
 					imageUri = Uri.fromFile(file);
 				}

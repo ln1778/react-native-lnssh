@@ -72,7 +72,7 @@ public class Utils {
     }
 
     public static Uri createUri(File file, Context reactContext) {
-        String authority = reactContext.getApplicationContext().getPackageName() + ".imagepickerprovider";
+        String authority = reactContext.getApplicationContext().getPackageName() + ".fileprovider";
         return FileProvider.getUriForFile(reactContext, authority, file);
     }
 

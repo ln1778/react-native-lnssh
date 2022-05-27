@@ -28,7 +28,7 @@ public class InstallReceiver extends BroadcastReceiver {
     private void installApk(Context context) {
         try {
             Intent i = new Intent(Intent.ACTION_VIEW);
-            String filePath = ConfigurationUtil.APK_PATH_ABSOULT+"lnssh.apk";
+            String filePath = ConfigurationUtil.APK_PATH_ABSOULT+ConfigurationUtil.APK_NAME;
             System.out.println(filePath);
             i.setDataAndType(Uri.parse("file://" + filePath), "application/vnd.android.package-archive");
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

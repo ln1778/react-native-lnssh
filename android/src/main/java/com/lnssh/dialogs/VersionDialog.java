@@ -231,7 +231,7 @@ public class VersionDialog  {
         String downloadUrl =this.hosturl;
         Log.d("TAG", "download:" + downloadUrl);
         VersionDialog _this=this;
-        DownloadUtil.getInstance().download(downloadUrl, ConfigurationUtil.APK_PATH_ABSOULT+"lnssh.apk", new DownloadUtil.OnDownloadListener() {
+        DownloadUtil.getInstance().download(downloadUrl, ConfigurationUtil.APK_PATH_ABSOULT+ConfigurationUtil.APK_NAME, new DownloadUtil.OnDownloadListener() {
             @Override
             public void onDownloadSuccess(String path) {
                 try {
@@ -282,7 +282,7 @@ public class VersionDialog  {
     }
     public void install(Context context,File file){
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        Uri apkUri = FileProvider.getUriForFile(context, "com.lnssh.fileprovider", file);
+        Uri apkUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName()+".fileprovider", file);
 
 
 //			Uri apkUri=Uri.parse("file://" + filePath);

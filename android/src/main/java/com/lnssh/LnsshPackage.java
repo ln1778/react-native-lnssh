@@ -35,6 +35,7 @@ public class LnsshPackage implements ReactPackage{
         modules.add(new CusToast(reactContext));
         modules.add(new RCTCameraModule(reactContext));
         modules.add(new ImagePickerModule(reactContext));
+        modules.add(new UpdateManager(reactContext,this.activity));
 
     return modules;
   }
