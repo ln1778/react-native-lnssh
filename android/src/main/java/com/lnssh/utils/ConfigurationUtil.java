@@ -9,7 +9,7 @@ public class ConfigurationUtil {
 	public static String WEBVERSION = "https://chatapp.hwanc.net/hwancchat/app/version.json";
 	public static String APKHOST = "https://hcoins.oss-cn-hangzhou.aliyuncs.com/hwancchat.apk";
 	public static String BUNDLEHOST = "https://hcoins.oss-cn-hangzhou.aliyuncs.com/index.android.bundle";
-	public static final String APK_NAME="lnssh.apk";
+	public static String APK_NAME="lnssh.apk";
 	public static final int SUCCESSCODE = 1;//成功标识
 	public static final int FAILURECODE = 0;//失败标识
 	public static final int ERRORCODE = 2;//网络请求异常标识
