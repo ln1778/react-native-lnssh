@@ -157,8 +157,7 @@ var {
     Text,
     NativeModules
 } = ReactNative;
-var Lnsshmanager = require('react-native-lnssh');
-var {LnsshModule,Toast,ImagePicker,Carams,permissionSetting} = Lnsshmanager;
+var {LnsshModule,Toast,ImagePicker,Carams,permissionSetting} = NativeModules;
 
 var KitchenSink = React.createClass({
     componentDidMount: function() {

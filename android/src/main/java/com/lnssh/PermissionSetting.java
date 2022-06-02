@@ -176,7 +176,7 @@ public class PermissionSetting extends ReactContextBaseJavaModule {
     public void goPermission(){
         try{
            Intent intent=new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-            Uri uri = Uri.fromParts("package", "com.lnssh", null);
+            Uri uri = Uri.fromParts("package", CONTEXT.getApplicationContext().getPackageName(), null);
             intent.setData(uri);
             CONTEXT.startActivity(intent);
         } catch (Exception e) {//抛出异常就直接打开设置页面

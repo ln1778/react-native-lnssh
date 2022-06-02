@@ -63,7 +63,8 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
   }
   @RequiresApi(api = Build.VERSION_CODES.O)
   public void startInstallPermissionSettingActivity() {
-	  Uri packageURI = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+	//   Uri packageURI = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+	  Uri packageURI = Uri.fromParts("package", CONTEXT.getApplicationContext().getPackageName(), null);
 	  Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
 	  this.CONTEXT.startActivityForResult(intent,1002,null);
   }
@@ -251,9 +252,19 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
    @RequiresApi(api = Build.VERSION_CODES.O)
    @ReactMethod
    public void saveImage(String imgsrc, Callback successback){
-	   Bitmap bmp=base64ToBitmap(imgsrc);
-	   saveImageToGallery(myContext,bmp);
-	   successback.invoke("true");
+	boolean hasInstallPermission = this.getReactApplicationContext().getPackageManager().canRequestPackageInstalls();
+	Log.d("hasInstallPermission", String.valueOf(hasInstallPermission));
+	if (!hasInstallPermission) {
+		startInstallPermissionSettingActivity();
+	} else {
+	  try{
+		Bitmap bmp=base64ToBitmap(imgsrc);
+		saveImageToGallery(myContext,bmp);
+		successback.invoke("true");
+	  }catch(Exception e){
+		successback.invoke("false");
+	  }
+	}
    }
 
    @ReactMethod
