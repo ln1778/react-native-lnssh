@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  DeviceEventEmitter, // android
   NativeAppEventEmitter, // ios
   NativeModules,
   Platform,
@@ -228,7 +227,7 @@ export default class Camera extends Component {
     if (onBarCodeRead) {
       this.cameraBarCodeReadListener = Platform.select({
         ios: NativeAppEventEmitter.addListener('CameraBarCodeRead', this._onBarCodeRead),
-        android: DeviceEventEmitter.addListener('CameraBarCodeReadAndroid',  this._onBarCodeRead)
+        android: NativeAppEventEmitter.addListener('CameraBarCodeReadAndroid',  this._onBarCodeRead)
       })
     }
   }

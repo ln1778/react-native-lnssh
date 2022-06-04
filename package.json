@@ -1,6 +1,6 @@
 {
   "name": "react-native-lnssh",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "description": "Provide lnssh to your React Native application",
   "license": "MIT",
   "author": "ln1778",
@@ -10,17 +10,23 @@
     "type": "git",
     "url": "github.com/ln1778/react-native-lnssh.git"
   },
+ 
   "keywords": [
     "react-native",
-    "react-component",
-    "ios",
+    "react-native-component",
+    "react-native-lnssh",
     "lnssh",
     "android",
+    "ios",
     "mobile"
+
   ],
+  "peerDependencies": {
+    "react-native": ">0.67.2"
+  },
   "dependencies": {
     "react": "17.0.2",
-    "react-native": "0.67.2",
+    "react-native": "0.68.2",
     "prop-types":"^15.8.1"
   }
 }

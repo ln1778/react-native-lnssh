@@ -9,8 +9,6 @@ const {
 const {LnsshModule,permissionSetting,UpdateManager}=NativeModules;
 
 
-
-
-export const myCarams=Carams.default;
-export const myImagePicker=ImagePicker.default;
-export {LnsshModule,permissionSetting,UpdateManager}
+ const myCarams=Carams.default;
+  const myImagePicker=ImagePicker.default;
+export default {myCarams,myImagePicker,LnsshModule,permissionSetting,UpdateManager}
