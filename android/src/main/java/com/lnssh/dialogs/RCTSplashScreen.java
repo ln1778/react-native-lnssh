@@ -53,6 +53,13 @@ public class RCTSplashScreen extends ReactContextBaseJavaModule {
     Map<String, Object> getConstants() {
         return MapBuilder.<String, Object>of("translucent", translucent);
     }
+    public static boolean isShowing() {
+        if (splashDialog != null && splashDialog.isShowing()) {
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     @ReactMethod
     public static void hide() {
