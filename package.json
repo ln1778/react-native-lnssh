@@ -1,6 +1,6 @@
 {
   "name": "react-native-lnssh",
-  "version": "0.0.54",
+  "version": "0.0.56",
   "description": "Provide lnssh to your React Native application",
   "license": "MIT",
   "author": "ln1778",
@@ -18,11 +18,14 @@
     "lnssh",
     "android",
     "ios",
-    "mobile"
-
+    "mobile",
+    "wechat"
   ],
   "peerDependencies": {
-    "react-native": ">0.67.2",
+    "react-native": ">0.67.2"
+  },
+  "dependencies": {
+    "events": "1.0.2",
     "react": ">17.0.2",
     "prop-types":">15.8.1"
   }
