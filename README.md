@@ -143,6 +143,14 @@ android:networkSecurityConfig="@xml/network_security_config"
 </network-security-config>
 
 ```
+```
+* Copy lines to proguard-rules.pro:
+```java
+-keep class com.tencent.mm.sdk.** {
+  *;
+}
+
+```
 
 ```
 *Integrating with login and share
