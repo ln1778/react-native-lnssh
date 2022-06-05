@@ -3,6 +3,7 @@
 const ReactNative = require('react-native');
 const Carams = require('./carams');
 const ImagePicker = require('./ImagePicker');
+const WxApi = require('./wxapi');
 const {
     NativeModules,
 } = ReactNative;
@@ -11,4 +12,5 @@ const {LnsshModule,permissionSetting,UpdateManager}=NativeModules;
 
  const myCarams=Carams.default;
   const myImagePicker=ImagePicker.default;
-export default {myCarams,myImagePicker,LnsshModule,permissionSetting,UpdateManager}
+  const myWxApi=WxApi.default;
+export default {myWxApi,myCarams,myImagePicker,LnsshModule,permissionSetting,UpdateManager}
