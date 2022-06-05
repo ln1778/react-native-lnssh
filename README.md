@@ -229,18 +229,22 @@ public class WXPayEntryActivity extends Activity {
 'use strict';
 var React = require('react');
 var ReactNative = require('react-native');
+import LnsshManager from "react-native-lnssh";
+var {LnsshModule,myImagePicker,WeChat,UpdateManager,permissionSetting} = LnsshManager;
+
 var {
     AppRegistry,
     View,
     Text,
     NativeModules
 } = ReactNative;
-var {LnsshModule,Toast,ImagePicker,Carams,permissionSetting} = NativeModules;
+
 
 var KitchenSink = React.createClass({
     componentDidMount: function() {
        LnsshModule.splash_hide();
-
+      WeChat.registerApp('appid');
+      WeChat.openWXApp();
     },
     render() {
         return(
