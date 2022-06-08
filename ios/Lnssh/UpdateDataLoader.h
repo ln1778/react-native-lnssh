@@ -1,5 +1,5 @@
 #import <Foundation/Foundation.h>
-@interface UpdateDataLoader : NSObject
+@interface UpdateDataLoader : RCTEventEmitter<RCTBridgeModule>
 @property (nonatomic, strong) NSMutableDictionary* versionInfo;
 @property (nonatomic, strong) NSString* device_token;
 
