@@ -102,7 +102,7 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
     
     if(qlServiceV>localV){
       [data setValue:@"2" forKey:@"has_new"];
-      [data setValue:data[@"ios_ql_url"] forKey:@"ios_ql_url"];
+      [data setValue:data[@"ios_ql_url"] forKey:@"down_url"];
         NSMutableDictionary *data2 = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%@", data[@"ios_build"]],@"bundleVersion",[NSString stringWithFormat:@"%@", data[@"ios_ql_url"]],@"downloadUrl",nil];
         [UpdateDataLoader sharedInstance].versionInfo=data2;
       callback(data);
@@ -113,6 +113,7 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
       //下载bundle文件 存储在 Doucuments/IOSBundle/下
       
       [data setValue:@"1" forKey:@"has_new"];
+      [data setValue:data[@"ios_url"] forKey:@"down_url"];
         NSMutableDictionary *data2 = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%@", data[@"ios_build"]],@"bundleVersion",[NSString stringWithFormat:@"%@", data[@"ios_url"]],@"downloadUrl",nil];
       [UpdateDataLoader sharedInstance].versionInfo=data2;
       [self closeSqlite];
@@ -135,30 +136,27 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
   
 }
 //获取版本信息
--(void)downLoad:(CallBack)cb{
-  
-  
+-(void)downLoad:(NSString *)has_new (CallBack)cb{
   
   NSString* url=[NSString stringWithFormat:@"%@",[UpdateDataLoader sharedInstance].versionInfo[@"downloadUrl"]];
     NSLog(@"versionInfo%@",[UpdateDataLoader sharedInstance].versionInfo);
     NSLog(@"url%@",url);
-  [[DownLoadTool defaultDownLoadTool] downLoadWithUrl:url callback:^(Boolean t){
-    
-    if(t){
-      [[UpdateDataLoader sharedInstance] writeAppVersionInfoWithDictiony:[UpdateDataLoader sharedInstance].versionInfo];
-      
-      
+    if(has_new==@"1"){
+      [[DownLoadTool defaultDownLoadTool] downLoadWithUrl:url callback:^(Boolean t){
+        
+        if(t){
+          [[UpdateDataLoader sharedInstance] writeAppVersionInfoWithDictiony:[UpdateDataLoader sharedInstance].versionInfo];
+          
+          
+        }
+        cb([UpdateDataLoader sharedInstance].versionInfo);
+        
+      }];
+    }else{
+      [[UIApplication sharedApplication] openURL:url options:nil completionHandler:^(Boolean t){
+
+      }];
     }
-    cb([UpdateDataLoader sharedInstance].versionInfo);
-    
-    
-  }];
-  
-  
-  //NSMutableDictionary *data2 = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%@", data[@"datas"][@"build"]],@"bundleVersion",[NSString stringWithFormat:@"%@", data[@"datas"][@"url"]],@"downloadUrl",nil];
-  
-  
-  
 }
 //获取版本信息
 -(void)downLoadApp:(CallBack)cb{

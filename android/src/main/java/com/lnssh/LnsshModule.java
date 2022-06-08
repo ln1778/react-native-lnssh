@@ -1,9 +1,16 @@
 package com.lnssh;
 
+import static com.facebook.imageutils.HeifExifUtil.TAG;
+import static com.lnssh.dialogs.VersionDialog.ACTIVITY_APP_INSTALL;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -13,6 +20,7 @@ import androidx.multidex.BuildConfig;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 
+import com.facebook.common.util.Hex;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactContext;
@@ -22,34 +30,61 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.zxing.aztec.decoder.Decoder;
 import com.lnssh.dialogs.RCTSplashScreen;
+import com.lnssh.dialogs.VersionDialog;
 import com.lnssh.utils.ConfigurationUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.Toast;
+
 import com.facebook.react.bridge.Promise;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.String;
 import java.net.URL;
+import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.UUID;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class LnsshModule extends ReactContextBaseJavaModule implements ActivityEventListener {
   final ReactApplicationContext CONTEXT;
   public static final int REQUEST_SEND_IMAGE = 13001;
   public static final int REQUEST_SEND_TEXT = 13002;
-  Activity activity;
-  Callback callback;
+  public static final int REQUEST_INSTALL = 21000;
+
+
+	JSONObject last_version;
+	String localPath;
+	String tmpPath;
+    Callback callback;
 	private static Bitmap mBitmap;
 	private static ReactContext myContext;
+	boolean loading;
+	public Promise downpromise;
+	public Promise openpromise;
+
 
   public LnsshModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -66,7 +101,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 	//   Uri packageURI = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
 	  Uri packageURI = Uri.fromParts("package", CONTEXT.getApplicationContext().getPackageName(), null);
 	  Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
-	  this.CONTEXT.startActivityForResult(intent,1002,null);
+	  this.CONTEXT.startActivityForResult(intent,REQUEST_INSTALL,null);
   }
   @SuppressLint("NewApi")
 	@ReactMethod
@@ -146,10 +181,287 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
      	RCTSplashScreen.hide();
 	}
 	@ReactMethod
-	public void check_version(String hosturl){
-	  UpdateManager.checkVersionUpdate((Context)this.activity,true,hosturl);
+	public void checkUpdate(String hostutl,final Promise promise) {
+		OkHttpClient mOkHttpClient = new OkHttpClient();
+		//创建一个Request
+		final Request request = new Request.Builder()
+				.url(hostutl)
+				.build();
+		//new call
+		Call call = mOkHttpClient.newCall(request);
+		//请求加入调度
+		call.enqueue(new okhttp3.Callback() {
+			@Override
+			public void onFailure(Call call, IOException e) {
+			}
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				String rs = response.body().string();
+				JSONObject datas = null;
+				try {
+					datas = new JSONObject(rs);
+					Log.d(TAG, rs);
+					Log.d(TAG, "rs:" + rs);
+					last_version = datas;
+					int llv = getLocalVersion();
+					int serverV = datas.getInt("android_build");
+					int qlserverV = datas.getInt("android_ql_build");
+					int localV = LnsshModule.this.getVersionCode(LnsshModule.this.getReactApplicationContext());
+					Log.d(TAG, "server v :" + serverV + " localV:" + localV + " llv:" + llv);
+					if (localV < llv) {
+						localV = llv;
+					}
+					WritableNativeMap map = new WritableNativeMap();
+					if (qlserverV >localV) {
+						map.putString("has_new", "2");
+						map.putString("down_url", datas.getString("android_ql_url"));
+					} else if (serverV >localV) {
+						map.putString("has_new", "1");
+						map.putString("down_url", datas.getString("android_url"));
+					} else {
+						map.putString("has_new", "0");
+					}
+					promise.resolve(map);
+				} catch (JSONException e) {
+					e.printStackTrace();
+					promise.reject("400", e.getMessage());
+				}
+			}
+		});
+	}
+	private static String getHash(String fileName, String hashType) throws Exception {
+		InputStream fis = new FileInputStream(fileName);
+		byte buffer[] = new byte[1024];
+		MessageDigest md5 = MessageDigest.getInstance(hashType);
+		for (int numRead = 0; (numRead = fis.read(buffer)) > 0; ) {
+			md5.update(buffer, 0, numRead);
+		}
+		fis.close();
+		return Hex.encodeHex(md5.digest(),false);
+	}
+	@RequiresApi(api = Build.VERSION_CODES.O)
+	@ReactMethod
+	public void isInstallPermission(final Promise promise) {
+		boolean hasInstallPermission = myContext.getPackageManager().canRequestPackageInstalls();
+		if (!hasInstallPermission) {
+			promise.reject("400","第三方安装权限未打开");
+			Toast.makeText(myContext, "第三方安装权限未打开", Toast.LENGTH_LONG).show();
+		} else {
+			promise.resolve("true");
+		}
+	}
+	@RequiresApi(api = Build.VERSION_CODES.O)
+	@ReactMethod
+	public void openInstallPermission(final Promise promise) {
+		openpromise=promise;
+		startInstallPermissionSettingActivity();
 	}
 
+	@ReactMethod
+	public void downloadNew(String has_new,final Promise promise) {
+		downpromise=promise;
+		if(loading){
+			return;
+		}
+		loading=true;
+		try {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				boolean hasInstallPermission = myContext.getPackageManager().canRequestPackageInstalls();
+				Log.d("hasInstallPermission", String.valueOf(hasInstallPermission));
+				if (!hasInstallPermission) {
+					startInstallPermissionSettingActivity();
+					promise.reject("400","权限未打开");
+				} else {
+					if (has_new.equals("1")) {
+						downbundle(last_version.getString("android_url"));
+					} else {
+						downapk(last_version.getString("android_ql_url"));
+					}
+				}
+			} else {
+				if (has_new.equals("1")) {
+					downbundle(last_version.getString("android_url"));
+				} else {
+					downapk(last_version.getString("android_ql_url"));
+				}
+			}
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+	public void downbundle(String hosturl){
+		tmpPath = myContext.getApplicationContext().getFilesDir().getAbsolutePath() + "/tmp_bundle";
+		localPath =myContext.getApplicationContext().getFilesDir().getAbsolutePath() + "/bundle";
+		Log.d("TAG", "download:" + hosturl);
+		Toast.makeText(myContext, R.string.back_install, Toast.LENGTH_LONG).show();
+		DownloadUtil.getInstance().download(hosturl, tmpPath, new DownloadUtil.OnDownloadListener() {
+			@Override
+			public void onDownloadSuccess(String path) {
+				try {
+					File f = new File(path);
+					String ha= getHash(path,"MD5");
+					//Log.d("test",ha);
+					if(!ha.equals(last_version.get("hash"))){
+						Toast.makeText(myContext,"hash error:"+ha+"!="+last_version.get("hash"), Toast.LENGTH_LONG).show();
+					   downpromise.reject("400","hash error:"+ha+"!="+last_version.get("hash"));
+						return;
+					}
+					f.renameTo(new File(localPath + "/" + f.getName()));
+					saveLocalVersion(last_version.getInt("android_build"));
+					downpromise.resolve("更新成功，下次启动即可生效");
+					downpromise=null;
+					Toast.makeText(myContext, R.string.update_success, Toast.LENGTH_LONG).show();
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+					downpromise.reject("400","下载失败");
+					downpromise=null;
+				} catch (Exception e) {
+					e.printStackTrace();
+					downpromise.reject("400","下载失败");
+					downpromise=null;
+				}
+			}
+			@Override
+			public void onDownloading(int progress) {
+				Log.d("progress",String.valueOf(progress));
+				myContext
+						.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+						.emit("update_progress", String.valueOf(progress));
+				loading=false;
+			}
+			@Override
+			public void onDownloadFailed() {
+				loading=false;
+				downpromise.reject("400","下载失败");
+				downpromise=null;
+				Toast.makeText(myContext, R.string.update_failed, Toast.LENGTH_LONG).show();
+			}
+		});
+	}
+	public void downapk(String hosturl){
+		Log.d("TAG", "download:" + hosturl);
+		DownloadUtil.getInstance().download(hosturl, ConfigurationUtil.APK_PATH_ABSOULT+ConfigurationUtil.APK_NAME, new DownloadUtil.OnDownloadListener() {
+			@Override
+			public void onDownloadSuccess(String path) {
+				try {
+					File f = new File(path);
+					Log.d("apkpath:",path);
+					//Log.d("test",ha);
+					installAPK(f);
+					Toast.makeText(myContext, R.string.update_success_install, Toast.LENGTH_LONG).show();
+				} catch (Exception e) {
+					e.printStackTrace();
+					downpromise.reject("400","下载失败");
+					downpromise=null;
+				}
+			}
+			@Override
+			public void onDownloading(int progress) {
+				Log.d("progress",String.valueOf(progress));
+				myContext
+						.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+						.emit("update_progress", String.valueOf(progress));
+				loading=false;
+			}
+			@Override
+			public void onDownloadFailed() {
+				Log.d("error","下载失败");
+				loading=false;
+				Toast.makeText(myContext, R.string.update_failed, Toast.LENGTH_LONG).show();
+				downpromise.reject("400","下载失败");
+				downpromise=null;
+			}
+		});
+	}
+	public void installAPK(File f){
+		if (Build.VERSION.SDK_INT < 23) {
+			Intent intents = new Intent();
+			intents.setAction(Intent.ACTION_VIEW);
+//                intents.addCategory("android.intent.category.DEFAULT");
+			Uri files= Uri.fromFile(f);
+			intents.setDataAndType(files, "application/vnd.android.package-archive");
+			intents.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			downpromise.resolve("更新成功，下次启动即可生效");
+			downpromise=null;
+			myContext.startActivity(intents);
+
+		} else if (Build.VERSION.SDK_INT >= 24) {
+			install(f);
+		} else {
+			if (f.exists()) {
+				openFile(f);
+			} else {
+			}
+		}
+	}
+	public void install(File file){
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		Uri apkUri = FileProvider.getUriForFile(myContext, myContext.getApplicationContext().getPackageName()+".fileprovider", file);
+
+
+//			Uri apkUri=Uri.parse("file://" + filePath);
+		intent.addCategory("android.intent.category.DEFAULT");
+		// 由于没有在Activity环境下启动Activity,设置下面的标签
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		//添加这一句表示对目标应用临时授权该Uri所代表的文件
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+		downpromise.resolve("更新成功，下次启动即可生效");
+		downpromise=null;
+		myContext.startActivity(intent);
+
+	}
+	public void openFile(File file) {
+		Intent intent = new Intent();
+		intent.addFlags(268435456);
+		intent.setAction("android.intent.action.VIEW");
+		String type = getMIMEType(file);
+		intent.setDataAndType(Uri.fromFile(file), type);
+		try {
+			downpromise.resolve("更新成功，下次启动即可生效");
+			downpromise=null;
+			myContext.startActivity(intent);
+		} catch (Exception var5) {
+			var5.printStackTrace();
+			downpromise.reject("400","安装失败");
+			downpromise=null;
+			Toast.makeText(myContext, R.string.no_find_apk, Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	public String getMIMEType(File var0) {
+		String var1 = "";
+		String var2 = var0.getName();
+		String var3 = var2.substring(var2.lastIndexOf(".") + 1, var2.length()).toLowerCase();
+		var1 = MimeTypeMap.getSingleton().getMimeTypeFromExtension(var3);
+		return var1;
+	}
+	public void saveLocalVersion(int newV) {
+		SharedPreferences sp = LnsshModule.this.getCurrentActivity().getSharedPreferences("local_version", Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.putInt("local_v", newV);
+		editor.commit();
+		Log.d(TAG, "save v :" + newV);
+	}
+	public int getLocalVersion() {
+		SharedPreferences sp = LnsshModule.this.getCurrentActivity().getSharedPreferences("local_version", Context.MODE_PRIVATE);
+		int v = sp.getInt("local_v", 0);
+		return v;
+	}
+	public int getVersionCode(Context context) {
+		PackageManager packageManager = context.getPackageManager();
+		PackageInfo packageInfo;
+		int versionCode = 0;
+		try {
+			packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+			versionCode = packageInfo.versionCode;
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+		return versionCode;
+	}
 	@ReactMethod
 	public void isPinCodeWithImage(String uristring, Callback callback){
 		Uri uri=Uri.parse(uristring);
@@ -196,6 +508,11 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			break;
 			case REQUEST_SEND_TEXT:
 				callback.invoke(getTextSuccessMap());
+			case REQUEST_INSTALL:
+				if(openpromise!=null){
+					openpromise.resolve("true");
+					openpromise=null;
+				}
 			break;
 		}
 	}

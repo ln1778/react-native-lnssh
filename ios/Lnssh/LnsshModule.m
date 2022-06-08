@@ -24,10 +24,31 @@ RCT_EXPORT_METHOD(splash_hide){
     }
     
 }
+RCT_EXPORT_METHOD(checkUpdate:(NSString *)hosturl,resolve:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject ){
+    RCTLogInfo(@"to checking!!!");
+  upLoatder = [UpdateDataLoader sharedInstance];
+  //保证存放路径是存在的
+  [upLoatder createPath];
+  //检查更新并下载，有更新则直接下载，无则保持默认配置
+  [upLoatder getAppVersion:hosturl ^(NSDictionary *data){
+    resolve(data);
+  }];
+}
 
-
-RCT_EXPORT_METHOD(check_version:(NSString *)hosturl){
-    [[UpdateManager sharedInstance] checkVersionUpdate:true hosturl:hosturl];
+RCT_EXPORT_METHOD(isInstallPermission:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject ){
+   resolve(@"true");
+}
+RCT_EXPORT_METHOD(openInstallPermission:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject){
+    resolve(@"true");
+}
+RCT_EXPORT_METHOD(downloadNew:(NSString *)has_new,resolve:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject ){
+   [upLoatder downLoad:has_new ^(NSDictionary *rs){
+    resolve(rs);
+  }];
 }
 
 

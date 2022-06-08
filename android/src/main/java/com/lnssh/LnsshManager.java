@@ -16,7 +16,4 @@ public class LnsshManager {
     public static void splash_show(int drawableId){
         RCTSplashScreen.show(activity,drawableId);
     }
-    public static void CheckVersionHost(String hosturl,boolean toastate){
-        UpdateManager.checkVersionUpdate(activity,toastate,hosturl);
-    }
 }

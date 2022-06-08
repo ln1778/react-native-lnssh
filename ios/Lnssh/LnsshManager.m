@@ -16,8 +16,5 @@
 + (void)show:(RCTRootView *)v {
     [RCTSplashScreen show:v];
 }
-+(void)CheckVersionHost:(NSString *)hosturl{
-    [[UpdateManager sharedInstance] checkVersionUpdate:false hosturl:hosturl];
-}
 
 @end

@@ -28,7 +28,7 @@ RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   [LnsshManager show:rootView]; //<--- add show SplashScreen
-  [LnsshManager CheckVersionHost:@"http://.....version.json"]; //<--- 检查版本更新 add CheckVersionHost
+  
   return YES;
 ```
 * In Info.plis
@@ -87,7 +87,7 @@ public class MainActivity extends ReactActivity {
         activity = this;    // <------ add here
         lnsshmanager=new LnsshManager(this);  // <------ add here
        lnsshmanager.splash_show(R.drawable.splash);// <------ 如果设置启动页 add here
-       // lnsshmanager.CheckVersionHost("https://......./version.json",false)  《-----检查版本更新 add here
+    
        ......
     }
 }

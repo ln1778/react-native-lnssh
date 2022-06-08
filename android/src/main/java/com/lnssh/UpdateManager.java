@@ -94,10 +94,9 @@ public class UpdateManager extends ReactContextBaseJavaModule {
     private static VersionDialog versionDialog;
 
 
-	public UpdateManager(ReactApplicationContext reactContext,Activity activity) {
+	public UpdateManager(ReactApplicationContext reactContext) {
         super(reactContext);
 	  	myContext=reactContext;
-        this.activity=activity;
         this.appContext=reactContext;
         localPath = reactContext.getApplicationContext().getFilesDir().getAbsolutePath() + "/bundle";
         tmpPath = reactContext.getApplicationContext().getFilesDir().getAbsolutePath() + "/tmp_bundle";
@@ -158,131 +157,5 @@ public class UpdateManager extends ReactContextBaseJavaModule {
                 myContext.startActivity(intent);
             }
         }
-    }
-
-	public static void checkVersionUpdate(Context context,  boolean toaststate,String hosturl) {
-		Log.d(TAG,"checkVersionUpdate");
-        versionDialog =new VersionDialog((Activity)context);
-		OkHttpClient mOkHttpClient = new OkHttpClient();
-
-		//创建一个Request
-		final Request request = new Request.Builder()
-			.url(hosturl)
-			.build();
-		//new call
-		Call call = mOkHttpClient.newCall(request);
-		//请求加入调度
-		call.enqueue(new okhttp3.Callback() {
-			@Override
-			public void onFailure(Call call, IOException e) {
-               Log.d("checkversionfailerr",e.getMessage());
-			}
-			@Override
-			public void onResponse(Call call, Response response) throws IOException {
-				String rs = response.body().string();
-				JSONObject datas =null;
-				try {
-					datas = new JSONObject(rs);
-					Log.d(TAG, rs);
-					Log.d(TAG, "checkversionrs:" + rs);
-                    String hash = datas.getString("hash");
-                    Log.d("hash", String.valueOf(hash));
-                    String update_content="";
-                    int llv = Tools.getVersion(context);
-					int serverV = datas.getInt("android_build");
-					int qlserverV = datas.getInt("android_ql_build");
-					int localV = getStaticLocalVersion(context);
-
-					Log.d("localV", String.valueOf(localV));
-					Log.d("serverV", String.valueOf(serverV));
-					Log.d("llv", String.valueOf(llv));
-					if (localV < llv) {
-						localV = llv;
-					}
-					if (qlserverV >localV) {
-						datas.put("has_new","2");
-                        versionDialog.setHostUrl(datas.getString("android_ql_url")).setMessage(update_content).setgetHasNew("2").setHash(hash).setAppAndroidBuild(serverV).show();
-					} else if (serverV >localV) {
-						datas.put("has_new","1");
-                        versionDialog.setHostUrl(datas.getString("android_url")).setMessage(update_content).setgetHasNew("1").setHash(hash).setAppAndroidBuild(serverV).show();
-					}else{
-						if(toaststate){
-							try {
-								if(toast!=null){
-									toast.setText(R.string.update_last);
-								}else{
-									toast= Toast.makeText(context, R.string.update_last, Toast.LENGTH_SHORT);
-								}
-								toast.show();
-							} catch (Exception e) {
-								//解决在子线程中调用Toast的异常情况处理
-								Looper.prepare();
-								Toast.makeText(context, R.string.update_last, Toast.LENGTH_SHORT).show();
-								Looper.loop();
-							}
-						}
-					}
-
-				} catch (JSONException e) {
-                    Log.d("checkversionerr",e.getMessage());
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-
-    private static String getHash(String fileName, String hashType) throws Exception {
-        InputStream fis = new FileInputStream(fileName);
-        byte buffer[] = new byte[1024];
-        MessageDigest md5 = MessageDigest.getInstance(hashType);
-        for (int numRead = 0; (numRead = fis.read(buffer)) > 0; ) {
-            md5.update(buffer, 0, numRead);
-        }
-        fis.close();
-        return Hex.encodeHex(md5.digest(),false);
-    }
-
-    public void saveLocalVersion(int newV,Context context) {
-        SharedPreferences sp =context.getSharedPreferences("local_version", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putInt("local_v", newV);
-        editor.commit();
-        Log.d(TAG, "save v :" + newV);
-    }
-	public static int getStaticLocalVersion(Context context) {
-		SharedPreferences sp = context.getSharedPreferences("local_version", Context.MODE_PRIVATE);
-		int v =0;
-		if(sp!=null){
-			v = sp.getInt("local_v", 0);
-			Log.d("local_v",String.valueOf(v));
-		}
-
-		return v;
-	}
-    public int getLocalVersion(Context context) {
-        SharedPreferences sp = context.getSharedPreferences("local_version", Context.MODE_PRIVATE);
-		int v =0;
-        if(sp!=null){
-			 v = sp.getInt("local_v", 0);
-			Log.d("local_v",String.valueOf(v));
-		}
-
-        return v;
-    }
-
-
-	public int getVersionCode(Context context) {
-        PackageManager packageManager = context.getPackageManager();
-        PackageInfo packageInfo;
-        int versionCode = 0;
-        try {
-            packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-            versionCode = packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        Log.d("versionCode:",String.valueOf(versionCode));
-        return versionCode;
     }
 }
