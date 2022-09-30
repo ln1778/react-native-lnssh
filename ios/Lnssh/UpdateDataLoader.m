@@ -137,10 +137,10 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
     callback(dic2);
     NSLog(@"请求失败");
   }];
-  
 }
+
 //获取版本信息
--(void)downLoad:(NSString *)has_new (CallBack)cb{
+-(void)downLoad:(NSString *)has_new callback:(CallBack)callback{
   
   NSString* url=[NSString stringWithFormat:@"%@",[UpdateDataLoader sharedInstance].versionInfo[@"downloadUrl"]];
     NSLog(@"versionInfo%@",[UpdateDataLoader sharedInstance].versionInfo);
@@ -153,18 +153,17 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
         }
         [self sendEventWithName:@"EventReminder" body:@"100"];
          [WHToast showMessage:@"更新成功，下次启动即可生效" duration:2 finishHandler:^{
-                      
                       }];
-        });
-        cb([UpdateDataLoader sharedInstance].versionInfo);
+     
+          callback([UpdateDataLoader sharedInstance].versionInfo);
         
       }];
     }else{
        [self sendEventWithName:@"EventReminder" body:@"0"];
-      [[UIApplication sharedApplication] openURL:url options:nil completionHandler:^(Boolean t){
-          cb([UpdateDataLoader sharedInstance].versionInfo);
-         [self sendEventWithName:@"EventReminder" body:@"100"];
-      }];
+//      [[UIApplication sharedApplication] openURL:url options:nil completionHandler:^(Boolean t){
+//          callback([UpdateDataLoader sharedInstance].versionInfo);
+//         [self sendEventWithName:@"EventReminder" body:@"100"];
+//      }];
     }
 }
 //获取版本信息

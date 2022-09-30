@@ -16,13 +16,15 @@ RCT_EXPORT_MODULE();
 
 +(instancetype)sharedInstance
 
-{static UpdateManager *instance = nil;
+{
+    static UpdateManager *instance = nil;
 
     if (instance == nil) {
 
       instance = [[UpdateManager alloc] init];
 
-     }return instance;
+     }
+return instance;
     
 }
 
