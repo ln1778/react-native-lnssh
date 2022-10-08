@@ -8,7 +8,6 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 import com.lnssh.ImagePicker.ImagePickerModule;
-import com.lnssh.RCTCame.RCTCameraModule;
 import com.lnssh.dialogs.RCTSplashScreen;
 
 import java.util.ArrayList;
