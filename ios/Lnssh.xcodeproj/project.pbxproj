@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AA1C01BF284CDAAD0012AC57 /* RCTWeChat.m in Sources */ = {isa = PBXBuildFile; fileRef = AA1C01BC284CDAAD0012AC57 /* RCTWeChat.m */; };
-		AA1C01C0284CDAAD0012AC57 /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA1C01BE284CDAAD0012AC57 /* libWeChatSDK.a */; };
 		AAAEC5DD27ACEEA700DFC472 /* Lnssh.m in Sources */ = {isa = PBXBuildFile; fileRef = AAAEC5DC27ACEEA700DFC472 /* Lnssh.m */; };
 		AAAEC5DE27ACEEA700DFC472 /* Lnssh.h in Copy Files */ = {isa = PBXBuildFile; fileRef = AAAEC5DB27ACEEA700DFC472 /* Lnssh.h */; };
 		AAAEC5F027ACEF0F00DFC472 /* ImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = AAAEC5E627ACEF0F00DFC472 /* ImagePickerManager.m */; };
@@ -41,13 +39,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		AA1C01AD284CDA740012AC57 /* libWeChatSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWeChatSDK.a; path = wechat/libWeChatSDK.a; sourceTree = "<group>"; };
-		AA1C01B9284CDAAD0012AC57 /* RCTWeChat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTWeChat.h; sourceTree = "<group>"; };
-		AA1C01BA284CDAAD0012AC57 /* WXApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXApi.h; sourceTree = "<group>"; };
-		AA1C01BB284CDAAD0012AC57 /* WXApiObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXApiObject.h; sourceTree = "<group>"; };
-		AA1C01BC284CDAAD0012AC57 /* RCTWeChat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTWeChat.m; sourceTree = "<group>"; };
-		AA1C01BD284CDAAD0012AC57 /* WechatAuthSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WechatAuthSDK.h; sourceTree = "<group>"; };
-		AA1C01BE284CDAAD0012AC57 /* libWeChatSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWeChatSDK.a; sourceTree = "<group>"; };
 		AAAEC5D827ACEEA700DFC472 /* libLnssh.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libLnssh.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAAEC5DB27ACEEA700DFC472 /* Lnssh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lnssh.h; sourceTree = "<group>"; };
 		AAAEC5DC27ACEEA700DFC472 /* Lnssh.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Lnssh.m; sourceTree = "<group>"; };
@@ -84,7 +75,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA1C01C0284CDAAD0012AC57 /* libWeChatSDK.a in Frameworks */,
+				
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,28 +85,14 @@
 		AA1C01AC284CDA740012AC57 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				AA1C01AD284CDA740012AC57 /* libWeChatSDK.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		AA1C01B8284CDAAD0012AC57 /* wechat */ = {
-			isa = PBXGroup;
-			children = (
-				AA1C01B9284CDAAD0012AC57 /* RCTWeChat.h */,
-				AA1C01BA284CDAAD0012AC57 /* WXApi.h */,
-				AA1C01BB284CDAAD0012AC57 /* WXApiObject.h */,
-				AA1C01BC284CDAAD0012AC57 /* RCTWeChat.m */,
-				AA1C01BD284CDAAD0012AC57 /* WechatAuthSDK.h */,
-				AA1C01BE284CDAAD0012AC57 /* libWeChatSDK.a */,
-			);
-			path = wechat;
-			sourceTree = "<group>";
-		};
+	
 		AAAEC5CF27ACEEA700DFC472 = {
 			isa = PBXGroup;
 			children = (
-				AA1C01B8284CDAAD0012AC57 /* wechat */,
 				AAAEC5E927ACEF0F00DFC472 /* camera */,
 				AAAEC5E427ACEF0F00DFC472 /* ImagePicker */,
 				AAAEC5DA27ACEEA700DFC472 /* Lnssh */,
@@ -242,7 +219,6 @@
 				AAAEC60C27ACEF1D00DFC472 /* RCTpermissionSetting.m in Sources */,
 				AAAEC60527ACEF1D00DFC472 /* RNBridgeModule.m in Sources */,
 				AAAEC5F327ACEF0F00DFC472 /* RCTCameraManager.m in Sources */,
-				AA1C01BF284CDAAD0012AC57 /* RCTWeChat.m in Sources */,
 				AAAEC5F227ACEF0F00DFC472 /* RCTSensorOrientationChecker.m in Sources */,
 				AAAEC5F127ACEF0F00DFC472 /* ImagePickerUtils.m in Sources */,
 				AAAEC60827ACEF1D00DFC472 /* URLHandler.m in Sources */,
@@ -378,7 +354,6 @@
 				DEVELOPMENT_TEAM = K2BXKG6Y8K;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/wechat",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -394,7 +369,7 @@
 				DEVELOPMENT_TEAM = K2BXKG6Y8K;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/wechat",
+					
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

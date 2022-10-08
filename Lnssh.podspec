@@ -15,7 +15,6 @@ Pod::Spec.new do |s|
   s.source_files = "ios/**/*.{h,m}"
   s.requires_arc = true
   s.platform     = :ios, "11.0"
-  s.vendored_libraries = "ios/libLnsshSDK.a"
   s.dependency "React-Core"
   s.frameworks = 'SystemConfiguration','CoreTelephony'
   s.library = 'sqlite3','c++','z'

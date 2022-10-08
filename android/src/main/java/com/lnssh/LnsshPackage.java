@@ -33,7 +33,6 @@ public class LnsshPackage implements ReactPackage{
 		modules.add(new LnsshModule(reactContext));
 		modules.add(new PermissionSetting(reactContext));
         modules.add(new CusToast(reactContext));
-        modules.add(new RCTCameraModule(reactContext));
         modules.add(new ImagePickerModule(reactContext));
         modules.add(new UpdateManager(reactContext));
         modules.add(new WeChatModule(reactContext));
