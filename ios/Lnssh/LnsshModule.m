@@ -117,9 +117,10 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			BufferedOutputStream bos = null;
 			java.io.FileOutputStream fos = null;
 			String filePath = ConfigurationUtil.RECORD_PATH_ABSOULT;
-			File dir = new File(filePath);
-			if (!dir.exists() && !dir.isDirectory()) {
-				dir.mkdirs();
+			File appDir = new File(Environment.getExternalStorageDirectory(), "/DCIM/Camera");
+			//File dir = new File(filePath);
+			if (!appDir.exists() && !appDir.isDirectory()) {
+				appDir.mkdirs();
 			}
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				boolean hasInstallPermission = this.getReactApplicationContext().getPackageManager().canRequestPackageInstalls();
@@ -130,13 +131,12 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			try {
 				Base64.Decoder decoder = Base64.getMimeDecoder();
 				byte[] bytes = decoder.decode(imageName.getBytes());
-				file=new File(filePath+"//"+fileName);
+				file=new File(appDir,fileName);
 				fos = new java.io.FileOutputStream(file);
 				bos = new BufferedOutputStream(fos);
 				bos.write(bytes);
 				Uri imageUri;
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-					
 					imageUri = FileProvider.getUriForFile(this.getReactApplicationContext(),this.myContext.getApplicationContext().getPackageName()+".fileprovider", file);
 				} else {
 					imageUri = Uri.fromFile(file);
