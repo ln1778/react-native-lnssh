@@ -146,12 +146,12 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
     NSLog(@"versionInfo%@",[UpdateDataLoader sharedInstance].versionInfo);
     NSLog(@"url%@",url);
     if(has_new==@"1"){
-      [self sendEventWithName:@"EventReminder" body:@"0"];
+     
       [[DownLoadTool defaultDownLoadTool] downLoadWithUrl:url callback:^(Boolean t){ 
         if(t){
           [[UpdateDataLoader sharedInstance] writeAppVersionInfoWithDictiony:[UpdateDataLoader sharedInstance].versionInfo];
         }
-        [self sendEventWithName:@"EventReminder" body:@"100"];
+//        [self sendEventWithName:@"EventReminder" body:@"100"];
          [WHToast showMessage:@"更新成功，下次启动即可生效" duration:2 finishHandler:^{
                       }];
      
@@ -159,7 +159,7 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
         
       }];
     }else{
-       [self sendEventWithName:@"EventReminder" body:@"0"];
+        
 //      [[UIApplication sharedApplication] openURL:url options:nil completionHandler:^(Boolean t){
 //          callback([UpdateDataLoader sharedInstance].versionInfo);
 //         [self sendEventWithName:@"EventReminder" body:@"100"];

@@ -16,6 +16,8 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   s.platform     = :ios, "11.0"
   s.dependency "React-Core"
+  s.dependency "WHToast"
+  s.dependency "MBProgressHUD"
   s.frameworks = 'SystemConfiguration','CoreTelephony'
   s.library = 'sqlite3','c++','z'
 end

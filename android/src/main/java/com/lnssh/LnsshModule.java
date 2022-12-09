@@ -78,7 +78,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 	JSONObject last_version;
 	String localPath;
 	String tmpPath;
-    Callback callback;
+    Promise callback;
 	private static Bitmap mBitmap;
 	private static ReactContext myContext;
 	boolean loading;
@@ -105,8 +105,8 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
   }
   @SuppressLint("NewApi")
 	@ReactMethod
-	public void goshareToSocial(ReadableMap data, Callback callback){
-		this.callback = callback;
+	public void goshareToSocial(ReadableMap data, Promise promise){
+		this.callback = promise;
 		String title=data.getString("title");
 		String imageName=data.getString("image");
 		final Activity currentActivity = getCurrentActivity();
@@ -147,7 +147,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 				currentActivity.startActivityForResult(Intent.createChooser(send,"我的分享"),REQUEST_SEND_IMAGE);
 			} catch (Exception e) {
 				e.printStackTrace();
-                callback.invoke(getErrorMap("400",e.getMessage()));
+				promise.resolve(getErrorMap("400",e.getMessage()));
 			} finally {
 				if (bos != null) {
 					try {
@@ -172,6 +172,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			currentActivity.startActivityForResult(Intent.createChooser(send,"我的分享"),REQUEST_SEND_TEXT);
 	    }
 	}
+
 	@ReactMethod
 	public void splash_show(){
 		RCTSplashScreen.native_show();
@@ -477,6 +478,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 
 	static ReadableMap getCancelMap() {
 		WritableMap map = Arguments.createMap();
+		map.putString("errorCode", "400");
 		map.putBoolean("didCancel", true);
 		return map;
 	}
@@ -504,10 +506,10 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 		Log.d("nativemo:resultCode",String.valueOf(resultCode));
 		switch (requestCode) {
 			case REQUEST_SEND_IMAGE:
-				callback.invoke(getImageSuccessMap());
+			  this.callback.resolve(getImageSuccessMap());
 			break;
 			case REQUEST_SEND_TEXT:
-				callback.invoke(getTextSuccessMap());
+			   this.callback.resolve(getTextSuccessMap());
 			case REQUEST_INSTALL:
 				if(openpromise!=null){
 					openpromise.resolve("true");
