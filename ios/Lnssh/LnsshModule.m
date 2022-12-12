@@ -84,7 +84,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 	boolean loading;
 	public Promise downpromise;
 	public Promise openpromise;
-
+	int progressnum = 0;
 
   public LnsshModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -194,6 +194,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			@Override
 			public void onFailure(Call call, IOException e) {
 			}
+
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
 				String rs = response.body().string();
@@ -206,6 +207,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 					int llv = getLocalVersion();
 					int serverV = datas.getInt("android_build");
 					int qlserverV = datas.getInt("android_ql_build");
+
 					int localV = LnsshModule.this.getVersionCode(LnsshModule.this.getReactApplicationContext());
 					Log.d(TAG, "server v :" + serverV + " localV:" + localV + " llv:" + llv);
 					if (localV < llv) {
@@ -221,6 +223,11 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 					} else {
 						map.putString("has_new", "0");
 					}
+					if(datas.getString("content")!=null&&!datas.getString("content").equals("")){
+						String content=datas.getString("content");
+						map.putString("content",content);
+					}
+
 					promise.resolve(map);
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -256,7 +263,13 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 		openpromise=promise;
 		startInstallPermissionSettingActivity();
 	}
+        @ReactMethod
+	private void restartApp() {
+		final Intent intent =myContext.getPackageManager().getLaunchIntentForPackage(myContext.getPackageName());
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			myContext.startActivity(intent);
 
+	}
 	@ReactMethod
 	public void downloadNew(String has_new,final Promise promise) {
 		downpromise=promise;
@@ -279,6 +292,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 					}
 				}
 			} else {
+				Log.d("hasInstallPermission", has_new);
 				if (has_new.equals("1")) {
 					downbundle(last_version.getString("android_url"));
 				} else {
@@ -311,7 +325,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 					saveLocalVersion(last_version.getInt("android_build"));
 					downpromise.resolve("更新成功，下次启动即可生效");
 					downpromise=null;
-					Toast.makeText(myContext, R.string.update_success, Toast.LENGTH_LONG).show();
+					//Toast.makeText(myContext, R.string.update_success, Toast.LENGTH_LONG).show();
 
 				} catch (JSONException e) {
 					e.printStackTrace();
@@ -340,30 +354,47 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			}
 		});
 	}
+
+	@ReactMethod
+	public void InstallApk(String path,final Promise promise) {
+		downpromise=promise;
+		File f = new File(path);
+		Log.d("apkpath:",path);
+		//Log.d("test",ha);
+		myinstallAPK(f);
+	}
+
 	public void downapk(String hosturl){
 		Log.d("TAG", "download:" + hosturl);
-		DownloadUtil.getInstance().download(hosturl, ConfigurationUtil.APK_PATH_ABSOULT+ConfigurationUtil.APK_NAME, new DownloadUtil.OnDownloadListener() {
+
+		String appDir =ConfigurationUtil.APK_PATH_ABSOULT+ConfigurationUtil.APK_NAME;
+		DownloadUtil.getInstance().download(hosturl, appDir, new DownloadUtil.OnDownloadListener() {
 			@Override
 			public void onDownloadSuccess(String path) {
-				try {
-					File f = new File(path);
-					Log.d("apkpath:",path);
-					//Log.d("test",ha);
-					installAPK(f);
-					Toast.makeText(myContext, R.string.update_success_install, Toast.LENGTH_LONG).show();
-				} catch (Exception e) {
-					e.printStackTrace();
-					downpromise.reject("400","下载失败");
-					downpromise=null;
+				if(progressnum==100){
+					try {
+						downpromise.resolve(path);
+						downpromise=null;
+						//Toast.makeText(myContext, R.string.update_success_install, Toast.LENGTH_LONG).show();
+						progressnum=0;
+						loading=false;
+					} catch (Exception e) {
+						progressnum=0;
+						downpromise.reject("400","下载失败");
+						downpromise=null;
+						e.printStackTrace();
+						loading=false;
+					}
 				}
 			}
 			@Override
 			public void onDownloading(int progress) {
 				Log.d("progress",String.valueOf(progress));
+				progressnum =progress;
 				myContext
 						.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
 						.emit("update_progress", String.valueOf(progress));
-				loading=false;
+
 			}
 			@Override
 			public void onDownloadFailed() {
@@ -375,7 +406,8 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			}
 		});
 	}
-	public void installAPK(File f){
+
+	public void myinstallAPK(File f){
 		if (Build.VERSION.SDK_INT < 23) {
 			Intent intents = new Intent();
 			intents.setAction(Intent.ACTION_VIEW);
