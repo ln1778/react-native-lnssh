@@ -1,13 +1,12 @@
 package com.lnssh;
 
 import static com.facebook.imageutils.HeifExifUtil.TAG;
-import static com.lnssh.dialogs.VersionDialog.ACTIVITY_APP_INSTALL;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -15,8 +14,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.telephony.TelephonyManager;
 import android.util.Log;
-import androidx.multidex.BuildConfig;
+
+import androidx.core.app.ActivityCompat;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 
@@ -32,9 +33,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.google.zxing.aztec.decoder.Decoder;
 import com.lnssh.dialogs.RCTSplashScreen;
-import com.lnssh.dialogs.VersionDialog;
 import com.lnssh.utils.ConfigurationUtil;
 
 import java.io.BufferedOutputStream;
@@ -42,11 +41,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -69,10 +68,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class LnsshModule extends ReactContextBaseJavaModule implements ActivityEventListener {
-  final ReactApplicationContext CONTEXT;
-  public static final int REQUEST_SEND_IMAGE = 13001;
-  public static final int REQUEST_SEND_TEXT = 13002;
-  public static final int REQUEST_INSTALL = 21000;
+	final ReactApplicationContext CONTEXT;
+	public static final int REQUEST_SEND_IMAGE = 13001;
+	public static final int REQUEST_SEND_TEXT = 13002;
+	public static final int REQUEST_INSTALL = 21000;
 
 
 	JSONObject last_version;
@@ -86,34 +85,36 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 	public Promise openpromise;
 	int progressnum = 0;
 
-  public LnsshModule(ReactApplicationContext reactContext) {
-    super(reactContext);
-	  CONTEXT = reactContext;
-	  myContext=reactContext;
-  }
+	public LnsshModule(ReactApplicationContext reactContext) {
+		super(reactContext);
+		CONTEXT = reactContext;
+		myContext = reactContext;
+	}
 
-  @Override
-  public String getName() {
-    return "LnsshModule";
-  }
-  @RequiresApi(api = Build.VERSION_CODES.O)
-  public void startInstallPermissionSettingActivity() {
-	//   Uri packageURI = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-	  Uri packageURI = Uri.fromParts("package", CONTEXT.getApplicationContext().getPackageName(), null);
-	  Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
-	  this.CONTEXT.startActivityForResult(intent,REQUEST_INSTALL,null);
-  }
-  @SuppressLint("NewApi")
+	@Override
+	public String getName() {
+		return "LnsshModule";
+	}
+
+	@RequiresApi(api = Build.VERSION_CODES.O)
+	public void startInstallPermissionSettingActivity() {
+		//   Uri packageURI = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+		Uri packageURI = Uri.fromParts("package", CONTEXT.getApplicationContext().getPackageName(), null);
+		Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
+		this.CONTEXT.startActivityForResult(intent, REQUEST_INSTALL, null);
+	}
+
+	@SuppressLint("NewApi")
 	@ReactMethod
-	public void goshareToSocial(ReadableMap data, final Promise promise){
+	public void goshareToSocial(ReadableMap data, final Promise promise) {
 		this.callback = promise;
-		String title=data.getString("title");
-		String imageName=data.getString("image");
+		String title = data.getString("title");
+		String imageName = data.getString("image");
 		final Activity currentActivity = getCurrentActivity();
 		Intent send = new Intent(Intent.ACTION_SEND);
-		if(imageName!=null){
+		if (imageName != null) {
 			File file = null;
-			String fileName="share.png";
+			String fileName = "share.png";
 			BufferedOutputStream bos = null;
 			java.io.FileOutputStream fos = null;
 			String filePath = ConfigurationUtil.RECORD_PATH_ABSOULT;
@@ -128,60 +129,63 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 				if (!hasInstallPermission) {
 					startInstallPermissionSettingActivity();
 				} else {
-			try {
-				Base64.Decoder decoder = Base64.getMimeDecoder();
-				byte[] bytes = decoder.decode(imageName.getBytes());
-				file=new File(appDir,fileName);
-				fos = new java.io.FileOutputStream(file);
-				bos = new BufferedOutputStream(fos);
-				bos.write(bytes);
-				Uri imageUri;
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-					imageUri = FileProvider.getUriForFile(this.getReactApplicationContext(),this.myContext.getApplicationContext().getPackageName()+".fileprovider", file);
-				} else {
-					imageUri = Uri.fromFile(file);
-				}
-				send.putExtra(Intent.EXTRA_TEXT, title);
-				send.putExtra(Intent.EXTRA_STREAM, imageUri);
-				send.setType("image/*");
-				currentActivity.startActivityForResult(Intent.createChooser(send,"我的分享"),REQUEST_SEND_IMAGE);
-			} catch (Exception e) {
-				e.printStackTrace();
-                this.callback.resolve(getErrorMap("400",e.getMessage()));
-			} finally {
-				if (bos != null) {
 					try {
-						bos.close();
-					} catch (IOException e) {
+						Base64.Decoder decoder = Base64.getMimeDecoder();
+						byte[] bytes = decoder.decode(imageName.getBytes());
+						file = new File(appDir, fileName);
+						fos = new java.io.FileOutputStream(file);
+						bos = new BufferedOutputStream(fos);
+						bos.write(bytes);
+						Uri imageUri;
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+							imageUri = FileProvider.getUriForFile(this.getReactApplicationContext(), this.myContext.getApplicationContext().getPackageName() + ".fileprovider", file);
+						} else {
+							imageUri = Uri.fromFile(file);
+						}
+						send.putExtra(Intent.EXTRA_TEXT, title);
+						send.putExtra(Intent.EXTRA_STREAM, imageUri);
+						send.setType("image/*");
+						currentActivity.startActivityForResult(Intent.createChooser(send, "我的分享"), REQUEST_SEND_IMAGE);
+					} catch (Exception e) {
 						e.printStackTrace();
-					}
-				}
-				if (fos != null) {
-					try {
-						fos.close();
-					} catch (IOException e) {
-						e.printStackTrace();
+						this.callback.resolve(getErrorMap("400", e.getMessage()));
+					} finally {
+						if (bos != null) {
+							try {
+								bos.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+						if (fos != null) {
+							try {
+								fos.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
 					}
 				}
 			}
-		 }
-        	}
-		}else{
+		} else {
 			send.setType("text/plain");
 			send.putExtra(Intent.EXTRA_TEXT, title);
-			currentActivity.startActivityForResult(Intent.createChooser(send,"我的分享"),REQUEST_SEND_TEXT);
-	    }
+			currentActivity.startActivityForResult(Intent.createChooser(send, "我的分享"), REQUEST_SEND_TEXT);
+		}
 	}
+
 	@ReactMethod
-	public void splash_show(){
+	public void splash_show() {
 		RCTSplashScreen.native_show();
 	}
+
 	@ReactMethod
-	public void splash_hide(){
-     	RCTSplashScreen.hide();
+	public void splash_hide() {
+		RCTSplashScreen.hide();
 	}
+
 	@ReactMethod
-	public void checkUpdate(String hostutl,final Promise promise) {
+	public void checkUpdate(String hostutl, final Promise promise) {
 		OkHttpClient mOkHttpClient = new OkHttpClient();
 		//创建一个Request
 		final Request request = new Request.Builder()
@@ -214,18 +218,18 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 						localV = llv;
 					}
 					WritableNativeMap map = new WritableNativeMap();
-					if (qlserverV >localV) {
+					if (qlserverV > localV) {
 						map.putString("has_new", "2");
 						map.putString("down_url", datas.getString("android_ql_url"));
-					} else if (serverV >localV) {
+					} else if (serverV > localV) {
 						map.putString("has_new", "1");
 						map.putString("down_url", datas.getString("android_url"));
 					} else {
 						map.putString("has_new", "0");
 					}
-					if(datas.getString("content")!=null&&!datas.getString("content").equals("")){
-						String content=datas.getString("content");
-						map.putString("content",content);
+					if (datas.getString("content") != null && !datas.getString("content").equals("")) {
+						String content = datas.getString("content");
+						map.putString("content", content);
 					}
 
 					promise.resolve(map);
@@ -236,6 +240,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			}
 		});
 	}
+
 	private static String getHash(String fileName, String hashType) throws Exception {
 		InputStream fis = new FileInputStream(fileName);
 		byte buffer[] = new byte[1024];
@@ -244,51 +249,55 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			md5.update(buffer, 0, numRead);
 		}
 		fis.close();
-		return Hex.encodeHex(md5.digest(),false);
+		return Hex.encodeHex(md5.digest(), false);
 	}
+
 	@RequiresApi(api = Build.VERSION_CODES.O)
 	@ReactMethod
 	public void isInstallPermission(final Promise promise) {
 		boolean hasInstallPermission = myContext.getPackageManager().canRequestPackageInstalls();
 		if (!hasInstallPermission) {
-			promise.reject("400","第三方安装权限未打开");
+			promise.reject("400", "第三方安装权限未打开");
 			Toast.makeText(myContext, "第三方安装权限未打开", Toast.LENGTH_LONG).show();
 		} else {
 			promise.resolve("true");
 		}
 	}
+
 	@RequiresApi(api = Build.VERSION_CODES.O)
 	@ReactMethod
 	public void openInstallPermission(final Promise promise) {
-		openpromise=promise;
+		openpromise = promise;
 		startInstallPermissionSettingActivity();
 	}
-        @ReactMethod
+
+	@ReactMethod
 	private void restartApp() {
-		final Intent intent =myContext.getPackageManager().getLaunchIntentForPackage(myContext.getPackageName());
+		final Intent intent = myContext.getPackageManager().getLaunchIntentForPackage(myContext.getPackageName());
 		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			myContext.startActivity(intent);
+		myContext.startActivity(intent);
 
 	}
+
 	@ReactMethod
-	public void downloadNew(String has_new,final Promise promise) {
-		downpromise=promise;
-		if(loading){
+	public void downloadNew(String has_new, final Promise promise) {
+		downpromise = promise;
+		if (loading) {
 			return;
 		}
-		loading=true;
+		loading = true;
 		try {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				boolean hasInstallPermission = myContext.getPackageManager().canRequestPackageInstalls();
 				Log.d("hasInstallPermission", String.valueOf(hasInstallPermission));
 				if (!hasInstallPermission) {
 					startInstallPermissionSettingActivity();
-					promise.reject("400","权限未打开");
+					promise.reject("400", "权限未打开");
 				} else {
 					if (has_new.equals("1")) {
 						downbundle(last_version.getString("android_url"));
 					} else {
-						downapk(last_version.getString("android_ql_url"));
+						downapk(last_version.getString("android_ql_url"), last_version.getString("apk_name"));
 					}
 				}
 			} else {
@@ -296,7 +305,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 				if (has_new.equals("1")) {
 					downbundle(last_version.getString("android_url"));
 				} else {
-					downapk(last_version.getString("android_ql_url"));
+					downapk(last_version.getString("android_ql_url"), last_version.getString("apk_name"));
 				}
 			}
 
@@ -304,9 +313,10 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			e.printStackTrace();
 		}
 	}
-	public void downbundle(String hosturl){
+
+	public void downbundle(String hosturl) {
 		tmpPath = myContext.getApplicationContext().getFilesDir().getAbsolutePath() + "/tmp_bundle";
-		localPath =myContext.getApplicationContext().getFilesDir().getAbsolutePath() + "/bundle";
+		localPath = myContext.getApplicationContext().getFilesDir().getAbsolutePath() + "/bundle";
 		Log.d("TAG", "download:" + hosturl);
 		Toast.makeText(myContext, R.string.back_install, Toast.LENGTH_LONG).show();
 		DownloadUtil.getInstance().download(hosturl, tmpPath, new DownloadUtil.OnDownloadListener() {
@@ -314,60 +324,89 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			public void onDownloadSuccess(String path) {
 				try {
 					File f = new File(path);
-					String ha= getHash(path,"MD5");
+					String ha = getHash(path, "MD5");
 					//Log.d("test",ha);
-					if(!ha.equals(last_version.get("hash"))){
-						Toast.makeText(myContext,"hash error:"+ha+"!="+last_version.get("hash"), Toast.LENGTH_LONG).show();
-					   downpromise.reject("400","hash error:"+ha+"!="+last_version.get("hash"));
+					if (!ha.equals(last_version.get("hash"))) {
+						Toast.makeText(myContext, "hash error:" + ha + "!=" + last_version.get("hash"), Toast.LENGTH_LONG).show();
+						downpromise.reject("400", "hash error:" + ha + "!=" + last_version.get("hash"));
 						return;
 					}
 					f.renameTo(new File(localPath + "/" + f.getName()));
 					saveLocalVersion(last_version.getInt("android_build"));
 					downpromise.resolve("更新成功，下次启动即可生效");
-					downpromise=null;
+					downpromise = null;
 					//Toast.makeText(myContext, R.string.update_success, Toast.LENGTH_LONG).show();
 
 				} catch (JSONException e) {
 					e.printStackTrace();
-					downpromise.reject("400","下载失败");
-					downpromise=null;
+					downpromise.reject("400", "下载失败");
+					downpromise = null;
 				} catch (Exception e) {
 					e.printStackTrace();
-					downpromise.reject("400","下载失败");
-					downpromise=null;
+					downpromise.reject("400", "下载失败");
+					downpromise = null;
 				}
 			}
+
 			@Override
 			public void onDownloading(int progress) {
-				Log.d("progress",String.valueOf(progress));
+				Log.d("progress", String.valueOf(progress));
 				myContext
 						.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
 						.emit("update_progress", String.valueOf(progress));
-				loading=false;
+				loading = false;
 			}
+
 			@Override
 			public void onDownloadFailed() {
-				loading=false;
-				downpromise.reject("400","下载失败");
-				downpromise=null;
+				loading = false;
+				downpromise.reject("400", "下载失败");
+				downpromise = null;
 				Toast.makeText(myContext, R.string.update_failed, Toast.LENGTH_LONG).show();
 			}
 		});
 	}
 
 	@ReactMethod
-	public void InstallApk(String path,final Promise promise) {
-		downpromise=promise;
+	public void InstallApk(String path, final Promise promise) {
+		downpromise = promise;
 		File f = new File(path);
-		Log.d("apkpath:",path);
+		Log.d("apkpath:", path);
 		//Log.d("test",ha);
 		myinstallAPK(f);
 	}
 
-	public void downapk(String hosturl){
+	@ReactMethod
+	public void getPhoneNumber(final Promise promise) {
+		try {
+			TelephonyManager tm = (TelephonyManager) myContext.getSystemService(Context.TELEPHONY_SERVICE);
+
+			String deviceid = tm.getDeviceId();
+
+			if (ActivityCompat.checkSelfPermission(myContext, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(myContext, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(myContext, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+				promise.reject("400","权限不足");
+			}else{
+				String tel = tm.getLine1Number();//手机号码
+
+				String imei = tm.getSimSerialNumber();
+
+				String imsi = tm.getSubscriberId();
+				WritableMap phonedata= Arguments.createMap();
+				phonedata.putString("phoneNumber",tel);
+				phonedata.putString("smsNumber",imei);
+				phonedata.putString("smsId",imsi);
+				phonedata.putString("deviceId",deviceid);
+				promise.resolve(phonedata);
+			}
+		}catch (Exception e){
+			promise.reject("400",e.getMessage());
+		}
+	}
+
+	public void downapk(String hosturl,String apk_name){
 		Log.d("TAG", "download:" + hosturl);
 
-		String appDir =ConfigurationUtil.APK_PATH_ABSOULT+ConfigurationUtil.APK_NAME;
+		String appDir =ConfigurationUtil.APK_PATH_ABSOULT+apk_name;
 		DownloadUtil.getInstance().download(hosturl, appDir, new DownloadUtil.OnDownloadListener() {
 			@Override
 			public void onDownloadSuccess(String path) {
@@ -482,6 +521,8 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 		int v = sp.getInt("local_v", 0);
 		return v;
 	}
+
+
 	public int getVersionCode(Context context) {
 		PackageManager packageManager = context.getPackageManager();
 		PackageInfo packageInfo;
@@ -500,7 +541,12 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 		Bitmap bitmap = null;
 		try {
 			bitmap = BitmapFactory.decodeStream(this.CONTEXT.getContentResolver().openInputStream(uri));
-			callback.invoke(null,QRHelper.getReult(bitmap));
+			if(QRHelper.getReult(bitmap)!=null){
+				callback.invoke(null,QRHelper.getReult(bitmap));
+			}else{
+				callback.invoke("识别错误",null);
+			}
+
 		} catch (FileNotFoundException e) {
 			callback.invoke(e,null);
 			e.printStackTrace();

@@ -1,6 +1,6 @@
 {
   "name": "react-native-lnssh",
-  "version": "0.0.82",
+  "version": "0.0.84",
   "description": "Provide lnssh to your React Native application",
   "license": "MIT",
   "author": "ln1778",
