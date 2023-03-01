@@ -3,7 +3,7 @@
 #import <React/RCTEventEmitter.h>
 #import "WHToast.h"
 
-@interface UpdateDataLoader:RCTEventEmitter<RCTBridgeModule>
+@interface UpdateDataLoader:NSObject<RCTBridgeModule>
 
 @property (nonatomic, strong) NSMutableDictionary* versionInfo;
 @property (nonatomic, strong) NSString* device_token;

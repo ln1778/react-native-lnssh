@@ -2,12 +2,18 @@
 #import "DownloadTool.h"
 #import "XMNetWorkHelper.h"
 #import <sqlite3.h>
+#import "UpdateManager.h"
 
 
 
 
 static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这个指针来完成
 @implementation UpdateDataLoader
+
+UpdateManager *updateManager;
+UpdateDataLoader *updateDataLoader;
+
+
 + (UpdateDataLoader *) sharedInstance
 {
   static UpdateDataLoader *sharedInstance = nil;
@@ -20,10 +26,8 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
   return sharedInstance;
 }
 
-- (NSArray<NSString *> *)supportedEvents
-{
-  return @[@"update_progress"];
-}
+
+
 
 //创建bundle路径
 -(void)createPath{
@@ -102,6 +106,7 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
     NSInteger qlServiceV=0;
     serviceV=[[NSString stringWithFormat:@"%@", data[@"ios_build"]] intValue];
     qlServiceV=[[NSString stringWithFormat:@"%@", data[@"ios_ql_build"]] intValue];
+
     NSLog(@"server version is：%ld",(long)serviceV);
     
     if(qlServiceV>localV){
@@ -144,26 +149,43 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
   
   NSString* url=[NSString stringWithFormat:@"%@",[UpdateDataLoader sharedInstance].versionInfo[@"downloadUrl"]];
     NSLog(@"versionInfo%@",[UpdateDataLoader sharedInstance].versionInfo);
-    NSLog(@"url%@",url);
-    if(has_new==@"1"){
-     
-      [[DownLoadTool defaultDownLoadTool] downLoadWithUrl:url callback:^(Boolean t){ 
-        if(t){
-          [[UpdateDataLoader sharedInstance] writeAppVersionInfoWithDictiony:[UpdateDataLoader sharedInstance].versionInfo];
-        }
-//        [self sendEventWithName:@"EventReminder" body:@"100"];
-         [WHToast showMessage:@"更新成功，下次启动即可生效" duration:2 finishHandler:^{
-                      }];
-     
-          callback([UpdateDataLoader sharedInstance].versionInfo);
-        
-      }];
+    NSLog(@"downLoadurl:%@",url);
+ 
+    if([has_new isEqual:@"1"]){
+        NSLog(@"has_new11:%@",has_new);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // [[UpdateManager sharedInstance] sendUpdateProgress:@"10"];
+            [[DownLoadTool defaultDownLoadTool] downLoadWithUrl:url callback:^(Boolean t){
+                if(t){
+                    [[UpdateDataLoader sharedInstance] writeAppVersionInfoWithDictiony:[UpdateDataLoader sharedInstance].versionInfo];
+                    //[[UpdateManager sharedInstance] sendUpdateProgress:@"100"];
+                }
+                callback(@{@"value":@"更新成功，下次启动即可生效"});
+            }];
+        });
+    }else if([has_new isEqual:@"2"]){
+        NSLog(@"has_new22:%@",has_new);
+       // [[UpdateManager sharedInstance] sendUpdateProgress:@"10"];
+        NSDictionary<UIApplicationOpenExternalURLOptionsKey,id> * openkeys;
+        dispatch_async(dispatch_get_main_queue(), ^{
+      
+            NSURL *downurl =[NSURL URLWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+            bool iscango=[[UIApplication sharedApplication] canOpenURL:downurl];
+                if(iscango){
+                    [[UIApplication sharedApplication] openURL:downurl options:nil completionHandler:^(BOOL success) {
+                        callback(@{@"value":@"更新成功，下次启动即可生效"});
+                    }];
+                }else{
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                    [WHToast showMessage:@"下载地址有误，请检查更新地址" duration:2 finishHandler:^{
+                        callback(@{@"value":@"更新成功，下次启动即可生效"});
+                                  }];
+                    });
+                }
+        });
     }else{
-        
-//      [[UIApplication sharedApplication] openURL:url options:nil completionHandler:^(Boolean t){
-//          callback([UpdateDataLoader sharedInstance].versionInfo);
-//         [self sendEventWithName:@"EventReminder" body:@"100"];
-//      }];
+        NSLog(@"has_new333:%@",has_new);
+        callback(@{@"value":@"更新成功，下次启动即可生效"});
     }
 }
 //获取版本信息
@@ -172,9 +194,18 @@ static sqlite3 *db;//是指向数据库的指针,我们其他操作都是用这�
     NSURL *url =[NSURL URLWithString:[iosurl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     NSLog(@"versionInfo%@",[UpdateDataLoader sharedInstance].versionInfo);
     NSLog(@"url%@",url);
-    [[UIApplication sharedApplication] openURL:url options:nil completionHandler:^(BOOL success) {
-          cb([UpdateDataLoader sharedInstance].versionInfo);
-    }];
+    bool iscango=[[UIApplication sharedApplication] canOpenURL:url];
+        if(iscango){
+            [[UIApplication sharedApplication] openURL:url options:nil completionHandler:^(BOOL success) {
+                cb([UpdateDataLoader sharedInstance].versionInfo);
+            }];
+        }else{
+            dispatch_async(dispatch_get_main_queue(), ^{
+            [WHToast showMessage:@"下载地址有误，请检查更新地址" duration:2 finishHandler:^{
+                cb([UpdateDataLoader sharedInstance].versionInfo);
+                          }];
+            });
+        }
 }
 
 
