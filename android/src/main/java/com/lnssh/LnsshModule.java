@@ -271,6 +271,13 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 
 	}
 	@ReactMethod
+	public void InstallApk(String apkurl,final Promise promise) {
+		downpromise=promise;
+		File f = new File(apkurl);
+		AppInstallAPK(f);
+	}
+
+	@ReactMethod
 	public void downloadNew(String has_new,final Promise promise) {
 		downpromise=promise;
 		if(loading){
@@ -366,8 +373,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 						File f = new File(path);
 						Log.d("apkpath:",path);
 						//Log.d("test",ha);
-						installAPK(f);
-						Toast.makeText(myContext, R.string.update_success_install, Toast.LENGTH_LONG).show();
+						downpromise.resolve(path);
 						progressnum=0;
 					} catch (Exception e) {
 						progressnum=0;
@@ -396,7 +402,7 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			}
 		});
 	}
-	public void installAPK(File f){
+	public void AppInstallAPK(File f){
 		if (Build.VERSION.SDK_INT < 23) {
 			Intent intents = new Intent();
 			intents.setAction(Intent.ACTION_VIEW);
@@ -417,6 +423,8 @@ public class LnsshModule extends ReactContextBaseJavaModule implements ActivityE
 			}
 		}
 	}
+
+
 	public void install(File file){
 		Intent intent = new Intent(Intent.ACTION_VIEW);
 		Uri apkUri = FileProvider.getUriForFile(myContext, myContext.getApplicationContext().getPackageName()+".fileprovider", file);

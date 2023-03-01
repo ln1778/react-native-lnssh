@@ -58,7 +58,7 @@ RCT_EXPORT_METHOD(downloadNew:(NSString *)has_new resolve:(RCTPromiseResolveBloc
 }
 RCT_EXPORT_METHOD(InstallApk:(NSString *)path resolve:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject ){
-   
+    resolve(@"true");
 }
 
 RCT_EXPORT_METHOD(goshareToSocial:(NSDictionary *)details resolve:(RCTPromiseResolveBlock)resolve
