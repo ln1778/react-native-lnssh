@@ -52,7 +52,7 @@ UpdateDataLoader *updateDataLoader;
   
   if(localV>localBuild){
     NSString* iOSBundlePath = [self iOSFileBundlePath];
-    NSString* filePath=[iOSBundlePath stringByAppendingString:@"/index.bundle"];
+    NSString* filePath=[iOSBundlePath stringByAppendingString:@"/index.ios.bundle"];
     if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
       return filePath;
     }
