@@ -16,12 +16,12 @@ public class ConfigurationUtil {
 
 	public static final int DBVERSION = 2;//数据库版本
 
-	public static final String SDFILE = Environment.getExternalStoragePublicDirectory("") + File.separator + "lnssh/";
+	public static final String SDFILE = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+ File.separator;
 
 	public static final String FILE_PATH = ConfigurationUtil.SDFILE + "camera" + File.separator;
-	public static final String APK_PATH = "lnssh/"+ "apk" + File.separator;
+	public static final String APK_PATH = "apk" + File.separator;
 	public static final String APK_PATH_ABSOULT = ConfigurationUtil.SDFILE+ "apk" + File.separator;
-	public static final String RECORD_PATH_ABSOULT = ConfigurationUtil.SDFILE+ "apk" + File.separator;
+	public static final String RECORD_PATH_ABSOULT = ConfigurationUtil.SDFILE+ "record" + File.separator;
 
   public static void setApkHost(String url){
 	APKHOST=url;

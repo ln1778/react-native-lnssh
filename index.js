@@ -2,7 +2,6 @@
 
 const ReactNative = require('react-native');
 import ImagePicker from "./ImagePicker";
-import * as WeChat from './wxapi';
 
 const {
     NativeModules,
@@ -10,4 +9,4 @@ const {
 const {LnsshModule,permissionSetting,UpdateManager}=NativeModules;
 
 
-export default {WeChat,ImagePicker,LnsshModule,permissionSetting,UpdateManager}
+export default {ImagePicker,LnsshModule,permissionSetting,UpdateManager}

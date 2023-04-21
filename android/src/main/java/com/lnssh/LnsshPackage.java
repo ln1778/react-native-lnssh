@@ -19,8 +19,14 @@ public class LnsshPackage implements ReactPackage{
   @Override
   public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
     List<NativeModule> modules = new ArrayList<>();
+<<<<<<< HEAD
         modules.add(new LnsshModule(reactContext));
         modules.add(new PermissionSetting(reactContext));
+=======
+		modules.add(new LnsshModule(reactContext));
+		modules.add(new PermissionSetting(reactContext));
+        modules.add(new CusToast(reactContext));
+>>>>>>> ff260c84f773df5c5d60968cdd9a3cbc8f6378cb
         modules.add(new ImagePickerModule(reactContext));
         modules.add(new UpdateManager(reactContext));
     return modules;

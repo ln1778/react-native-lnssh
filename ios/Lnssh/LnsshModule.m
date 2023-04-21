@@ -1,21 +1,23 @@
 
 #import "LnsshModule.h"
-
+#import "DownloadTool.h"
 
 @implementation LnsshModule
 
+
+
+
+
 UIViewController *topRootViewController;
 
-
+UpdateDataLoader *upLoatder;
 RCT_EXPORT_MODULE();
 
-+ (BOOL)requiresMainQueueSetup {
-  return YES;
-}
 
 RCT_EXPORT_METHOD(splash_show){
     [RCTSplashScreen splashshow];
 }
+
 RCT_EXPORT_METHOD(splash_hide){
     @try {
         [RCTSplashScreen hide];
@@ -24,43 +26,53 @@ RCT_EXPORT_METHOD(splash_hide){
     }
     
 }
-RCT_EXPORT_METHOD(checkUpdate:(NSString *)hosturl,resolve:(RCTPromiseResolveBlock)resolve
+
+RCT_EXPORT_METHOD(checkUpdate:(NSString *)hosturl resolve:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject ){
     RCTLogInfo(@"to checking!!!");
   upLoatder = [UpdateDataLoader sharedInstance];
   //保证存放路径是存在的
   [upLoatder createPath];
-  //检查更新并下载，有更新则直接下载，无则保持默认配置
-  [upLoatder getAppVersion:hosturl ^(NSDictionary *data){
-    resolve(data);
-  }];
+    
+    [upLoatder getAppVersion:hosturl callback:^(NSDictionary *data) {
+        resolve(data);
+    }];
 }
 
-RCT_EXPORT_METHOD(isInstallPermission:(RCTPromiseResolveBlock)resolve
-                 rejecter:(RCTPromiseRejectBlock)reject ){
+RCT_EXPORT_METHOD(isInstallPermission:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject ){
    resolve(@"true");
 }
 RCT_EXPORT_METHOD(openInstallPermission:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject){
     resolve(@"true");
 }
-RCT_EXPORT_METHOD(downloadNew:(NSString *)has_new,resolve:(RCTPromiseResolveBlock)resolve
-                 rejecter:(RCTPromiseRejectBlock)reject ){
-   [upLoatder downLoad:has_new ^(NSDictionary *rs){
-    resolve(rs);
-  }];
+RCT_EXPORT_METHOD(restartApp){
+   
 }
 
+RCT_EXPORT_METHOD(downloadNew:(NSString *)has_new resolve:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject ){
+    [upLoatder downLoad:has_new callback:^(NSDictionary *data) {
+        resolve(data);
+    }];
+}
+RCT_EXPORT_METHOD(InstallApk:(NSString *)path resolve:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject ){
+    resolve(@"true");
+}
 
-RCT_EXPORT_METHOD(goshareToSocial:(NSDictionary *)details callback:(RCTResponseSenderBlock)callback){
+RCT_EXPORT_METHOD(goshareToSocial:(NSDictionary *)details resolve:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject){
+    dispatch_async(dispatch_get_main_queue(), ^{
     NSData *decodedImageData;
-    UIImage *shareImage=[UIImage imageNamed:@"QRlogo"];
+    UIImage *shareImage=[UIImage imageNamed:@"logo"];
     UIActivityViewController *activityVC;
     NSString *title = details[@"title"]?details[@"title"]:@"";
     NSString *content =details[@"content"]?details[@"content"]:@"";
     NSString *image =details[@"image"]?details[@"image"]:@"logo";
     NSString *url =details[@"url"]?details[@"url"]:nil;
-    if([NSURL URLWithString:url]) {
+    
+    if([NSURL URLWithString:url]){
         NSMutableArray *activityItems;
         activityItems = [NSMutableArray array];
         if(title==@""){
@@ -124,22 +136,21 @@ RCT_EXPORT_METHOD(goshareToSocial:(NSDictionary *)details callback:(RCTResponseS
     }
  
     activityVC.completionWithItemsHandler = ^(UIActivityType  _Nullable activityType, BOOL completed, NSArray * _Nullable returnedItems, NSError * _Nullable activityError) {
-        NSDictionary *backdata;
-        
+
+        NSDictionary *result=@{};
         if(activityError!=nil){
-            [backdata setValue:@"400" forKey:@"errorCode"];
-            [backdata setValue:activityError forKey:@"errorMessage"];
-            callback(backdata);
+            result = @{@"errorCode":@"400", @"errorMessage":activityError};
+            resolve(result);
         }else{
             if (completed) {
-                [backdata setValue:@"true" forKey:@"share_state"];
-                callback(backdata);
+                result = @{@"share_state":@"true"};
+                resolve(result);
                 NSLog(@"completed%@",activityType);
                 //分享 成功
-                } else  {
+            } else  {
                 NSLog(@"cancled");
-                    [backdata setValue:@"true" forKey:@"didCancel"];
-                    callback(backdata);
+                result = @{@"errorCode":@"400",@"errorMessage":@"您已取消了分享",@"didCancel":@"true"};
+                resolve(result);
                 }
             };
     };
@@ -152,10 +163,11 @@ RCT_EXPORT_METHOD(goshareToSocial:(NSDictionary *)details callback:(RCTResponseS
               // 这里固定写法
             topRootViewController = topRootViewController.presentedViewController;
           }
-        dispatch_async(dispatch_get_main_queue(), ^{
+       
          [topRootViewController presentViewController:activityVC animated:YES completion:nil];
-        });
+       
     }
+    });
 }
 
 RCT_EXPORT_METHOD(isPinCodeWithImage:(NSString *)imageName callback:(RCTResponseSenderBlock)callback){
@@ -235,18 +247,26 @@ RCT_EXPORT_METHOD(saveImage:(NSString *)imageurl callback:(RCTResponseSenderBloc
     NSData *imageData = [[NSData alloc] initWithBase64EncodedString:imageurl options:NSDataBase64DecodingIgnoreUnknownCharacters];
     UIImage *image = [UIImage imageWithData:imageData];
     NSLog(@"img%@",image);
-    [[PHPhotoLibrary sharedPhotoLibrary]performChanges:^{
-           [PHAssetChangeRequest creationRequestForAssetFromImage:image];
-       } completionHandler:^(BOOL success, NSError * _Nullable error) {
+    if(image!=nil){
       
-           if (error) {
-               NSLog(@"%@",@"保存失败");
-               callback(@[@"400",@"failed"]);
-           } else {
-               NSLog(@"%@",@"保存成功");
-               callback(@[@"200",@"success"]);
-           }
-       }];
+        [[PHPhotoLibrary sharedPhotoLibrary]performChanges:^{
+               [PHAssetChangeRequest creationRequestForAssetFromImage:image];
+           } completionHandler:^(BOOL success, NSError * _Nullable error) {
+          
+               if (error) {
+                   NSLog(@"error:",error);
+                   NSLog(@"%@",@"保存失败");
+                   callback(@[@"failed"]);
+               } else {
+                   NSLog(@"%@",@"保存成功");
+                   callback(@[@"true"]);
+               }
+           }];
+    }else{
+        NSLog(@"error:",@"图片解析错误");
+        callback(@[@"failed"]);
+    }
+  
 }
 
 RCT_EXPORT_METHOD(donwloadSaveImg:(NSString *)filePaths resolve:(RCTPromiseResolveBlock)resolve
@@ -257,10 +277,10 @@ RCT_EXPORT_METHOD(donwloadSaveImg:(NSString *)filePaths resolve:(RCTPromiseResol
        } completionHandler:^(BOOL success, NSError * _Nullable error) {
            if (error) {
                NSLog(@"%@",@"保存失败");
-               reject(@"400",@"保存失败",error);
+               resolve(@[@"false"]);
            } else {
                NSLog(@"%@",@"保存成功");
-               resolve(@"true");
+               resolve(@[@"true"]);
            }
        }];
 }
