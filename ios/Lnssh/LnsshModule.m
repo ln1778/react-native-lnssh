@@ -19,12 +19,7 @@ RCT_EXPORT_METHOD(splash_show){
 }
 
 RCT_EXPORT_METHOD(splash_hide){
-    @try {
-        [RCTSplashScreen hide];
-    } @catch (NSException *exception) {
-        
-    }
-    
+    [RCTSplashScreen splashhide];
 }
 
 RCT_EXPORT_METHOD(checkUpdate:(NSString *)hosturl resolve:(RCTPromiseResolveBlock)resolve

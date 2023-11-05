@@ -1,6 +1,6 @@
 #import "RCTSplashScreen.h"
 
-static RCTRootView *rootView = nil;
+static UIView *rootView = nil;
 static UIImageView *view=nil;
 
 @interface RCTSplashScreen()
@@ -11,17 +11,16 @@ static UIImageView *view=nil;
 
 RCT_EXPORT_MODULE(SplashScreen)
 
-+ (void)show:(RCTRootView *)v {
++ (void)show:(UIView *)v {
     rootView = v;
-    rootView.frame=[UIApplication sharedApplication].delegate.window.frame;
-    view = [[UIImageView alloc]initWithFrame:[UIApplication sharedApplication].delegate.window.frame];
-    view.image = [UIImage imageNamed:@"splash"];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:rootView  name:RCTContentDidAppearNotification object:rootView];
+   // v.frame=[UIApplication sharedApplication].delegate.window.frame;
+    view = [[UIImageView alloc] init];
+    view.frame=[UIApplication sharedApplication].delegate.window.frame;
+    view.backgroundColor=[UIColor blueColor];
+    view.image = [UIImage imageNamed:@"splash.jpg"];
+//    [[NSNotificationCenter defaultCenter] removeObserver:rootView  name:RCTContentDidAppearNotification object:rootView];
     NSLog(@"splash_show");
-    dispatch_async(dispatch_get_main_queue(), ^{
-    [rootView addSubview:view];
-    });
+    [v addSubview:view];
 }
 + (void)splashshow{
     NSLog(@"splash_show000");
@@ -35,15 +34,27 @@ RCT_EXPORT_MODULE(SplashScreen)
     });
 }
 
++ (void)splashhide{
+    NSLog(@"splash_show000");
+    if (!rootView) {
+        return;
+    }
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
+                   dispatch_get_main_queue(),
+                   ^{
+        [view removeFromSuperview];
+                   });
+}
+
 RCT_EXPORT_METHOD(hide) {
     if (!rootView) {
         return;
     }
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(rootView.loadingViewFadeDuration * NSEC_PER_SEC)),
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
                    dispatch_get_main_queue(),
                    ^{
                        [UIView transitionWithView: rootView
-                                         duration:rootView.loadingViewFadeDelay
+                                         duration:1
                                           options:UIViewAnimationOptionTransitionCrossDissolve
                                        animations:^{
                                           view.hidden = YES;

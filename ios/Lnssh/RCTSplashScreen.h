@@ -5,7 +5,7 @@
 
 @interface RCTSplashScreen : NSObject <RCTBridgeModule>
 
-+(void)show:(RCTRootView *)v;
++(void)show:(UIView *)v;
 + (void)splashshow;
-+(void)hide;
++ (void)splashhide;
 @end
